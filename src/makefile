@@ -1,8 +1,8 @@
 CC = gcc
 #Using -Ofast instead of -O3 might result in faster code, but is supported only by newer GCC versions
-CFLAGS = -lm -pthread -O3 -march=native -Wall -funroll-loops -Wno-unused-result -fno-stack-protector 
+CFLAGS = -lm -pthread -O3 -march=native -Wall -funroll-loops -Wno-unused-result -fno-stack-protector
 
-all: word2vec word2phrase distance word-analogy compute-accuracy
+all: word2vec word2phrase distance word-analogy compute-accuracy getNearest
 
 word2vec : word2vec.c
 	$(CC) word2vec.c -o word2vec $(CFLAGS)
@@ -15,6 +15,11 @@ word-analogy : word-analogy.c
 compute-accuracy : compute-accuracy.c
 	$(CC) compute-accuracy.c -o compute-accuracy $(CFLAGS)
 	chmod +x *.sh
+
+### getNearest by leexun
+getNearest : getNearest.c
+	$(CC) getNearest.c -o getNearest $(CFLAGS)
+### getNearest by leexun
 
 clean:
 	rm -rf word2vec word2phrase distance word-analogy compute-accuracy

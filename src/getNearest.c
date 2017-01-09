@@ -21,6 +21,18 @@ const long long max_size = 2000;         // max length of strings
 const long long N = 40;                  // number of closest words that will be shown
 const long long max_w = 50;              // max length of vocabulary entries
 
+int ArgPos(char *str, int argc, char **argv) {
+  int a;
+  for (a = 1; a < argc; a++) if (!strcmp(str, argv[a])) {
+    if (a == argc - 1) {
+      printf("Argument missing for %s\n", str);
+      exit(1);
+    }
+    return a;
+  }
+  return -1;
+}
+
 int main(int argc, char **argv) {
   FILE *f;
   char st1[max_size];
@@ -34,7 +46,9 @@ int main(int argc, char **argv) {
     printf("Usage: ./distance <FILE>\nwhere FILE contains word projections in the BINARY FORMAT\n");
     return 0;
   }
-  strcpy(file_name, argv[1]);
+  // strcpy(file_name, argv[1]);
+  int fnp = ArgPos((char *)"-f", argc, argv);
+  strcpy(file_name, argv[fnp+1]);
   f = fopen(file_name, "rb");
   if (f == NULL) {
     printf("Input file not found\n");
@@ -64,20 +78,21 @@ int main(int argc, char **argv) {
     for (a = 0; a < size; a++) M[a + b * size] /= len;
   }
   fclose(f);
-  while (1) {
+
+  // i 代表第 i 個參數, 嘗試看看寫可以吃 n 個, 或是讓他 call n 次
+  int i = 0;
+  // int argcCount = 0;
+  // while (argcCount > 0) {
     for (a = 0; a < N; a++) bestd[a] = 0;
     for (a = 0; a < N; a++) bestw[a][0] = 0;
-    printf("Enter word or sentence (EXIT to break): ");
-    a = 0;
-    while (1) {
-      st1[a] = fgetc(stdin);
-      if ((st1[a] == '\n') || (a >= max_size - 1)) {
-        st1[a] = 0;
-        break;
-      }
-      a++;
+    // printf("Enter word or sentence (EXIT to break): ");
+    i = ArgPos((char *)"-w", argc, argv);
+    strcpy(st1, argv[i+1]);
+    if(strlen(st1) > max_size-1)
+    {
+      printf("Word byte is too large.");
+      return -1;
     }
-    if (!strcmp(st1, "EXIT")) break;
     cn = 0;
     b = 0;
     c = 0;
@@ -98,14 +113,12 @@ int main(int argc, char **argv) {
       for (b = 0; b < words; b++) if (!strcmp(&vocab[b * max_w], st[a])) break;
       if (b == words) b = -1;
       bi[a] = b;
-      printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
+      // printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
       if (b == -1) {
-        printf("Out of dictionary word!\n");
-        break;
+        printf("Out of dictionary word,%s\n", st[a]);
+        return -2;
       }
     }
-    if (b == -1) continue;
-    // printf("\n                                              Word       Cosine distance\n------------------------------------------------------------------------\n");
     for (a = 0; a < size; a++) vec[a] = 0;
     for (b = 0; b < cn; b++) {
       if (bi[b] == -1) continue;
@@ -135,7 +148,7 @@ int main(int argc, char **argv) {
         }
       }
     }
-    for (a = 0; a < N; a++) printf("%50s\t\t%f\n", bestw[a], bestd[a]);
-  }
+    for (a = 0; a < N; a++) printf("%s,%f\n", bestw[a], bestd[a]);
+  // }
   return 0;
 }
