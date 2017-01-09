@@ -16,4 +16,4 @@ var trainFile = "./data/train.data",
 //     logOn: false
 //   });
 w2v.load( modelFile );
-w2v.getNearest();
+w2v.getSimilar();
