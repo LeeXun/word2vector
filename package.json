@@ -1,0 +1,33 @@
+{
+  "name": "word2vector",
+  "version": "1.0.1",
+  "description": "a word2vector interface for nodejs",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LeeXun/word2vector.git"
+  },
+  "keywords": [
+    "word2vector",
+    "machine learning",
+    "chinese",
+    "deep-learning",
+    "向量",
+    "vector"
+  ],
+  "author": "leexun",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "nodejieba": "^2.2.4",
+    "lodash": "^4.17.4",
+    "change-case": "^2.1.5",
+    "charm": "^1.0.0",
+    "mime": "^1.2.11"
+  },
+  "devDependencies": {
+    "should": "^11.1.2"
+  }
+}

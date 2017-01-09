@@ -1,0 +1,24 @@
+# Git
+.git*
+
+# Utilities #
+#############
+yarn.lock
+
+# Directories #
+###############
+test/
+data/
+
+# Node.js #
+###########
+.npmignore
+/node_modules/
+
+# Logs #
+########
+*.log
+
+# Run #
+########
+run.js
