@@ -32,4 +32,4 @@ getNearests : getNearests.c
 ### getNearests by leexun
 
 clean:
-	rm -rf word2vec word2phrase distance word-analogy compute-accuracy
+	rm -rf word2vec word2phrase distance word-analogy compute-accuracy getSimilar getVectors getNearests
