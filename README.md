@@ -21,7 +21,7 @@ var w2v = require( 'word2vector' );
 # Document
 ## API
 ### w2v.train( trainFile, modelFile, options, callback )
-[Click here to see example TrainFile format.](https://github.com/LeeXun/word2vector/blob/master/data/train.data)
+[Click here to see example TrainFile format.](https://github.com/LeeXun/word2vector/blob/master/data/train.data) <br>
 Example:
 ``` javascript
 var w2v = require("./lib");
