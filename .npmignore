@@ -9,6 +9,7 @@ yarn.lock
 ###############
 test/
 data/
+example/
 
 # Node.js #
 ###########
