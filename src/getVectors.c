@@ -61,13 +61,17 @@ int main(int argc, char **argv) {
   // strcpy(file_name, argv[1]);
   int fnp = ArgPos((char *)"-f", argc, argv);
   strcpy(file_name, argv[fnp+1]);
-  f = fopen(file_name, "rb");
+  int isbinary = ArgPos((char *)"-b", argc, argv);
+  if(isbinary != -1 && atoi(argv[isbinary+1]) == 1) f = fopen(file_name, "r");
+  else f = fopen(file_name, "rb");
+
   if (f == NULL) {
     printf("Input file not found\n");
     return -1;
   }
   fscanf(f, "%lld", &words);
   fscanf(f, "%lld", &size);
+
   vocab = (char *)malloc((long long)words * max_w * sizeof(char));
   for (a = 0; a < N; a++) bestw[a] = (char *)malloc(max_size * sizeof(char));
   M = (float *)malloc((long long)words * (long long)size * sizeof(float));
@@ -88,7 +92,18 @@ int main(int argc, char **argv) {
     for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
     len = sqrt(len);
     for (a = 0; a < size; a++) M[a + b * size] /= len;
+
+    // printf("%c", vocab[b * max_w]);
   }
+
+  // for (b = 0; b < 4; b++) { // print M martix
+  //   printf("%lld", vo)
+  //   for (a = 0; a < size; a++) {
+  //     printf("%f,", M[a + b * size]);
+  //   }
+  //   printf("\n");
+  // }
+
   fclose(f);
 
   // i 代表第 i 個參數, 嘗試看看寫可以吃 n 個, 或是讓他 call n 次

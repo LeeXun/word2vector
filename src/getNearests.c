@@ -33,11 +33,21 @@ int ArgPos(char *str, int argc, char **argv) {
   return -1;
 }
 
+int split(char **arr, char *str, const char *del) {
+  char *s = strtok(str, del);
+  int count = 0;
+  while(s != NULL) {
+     *arr++ = s;
+     s = strtok(NULL, del);
+     count ++;
+  }
+  return count;
+}
+
 int main(int argc, char **argv) {
   FILE *f;
-  char st1[max_size];
   char *bestw[N];
-  char file_name[max_size], st[100][max_size];
+  char file_name[max_size];
   float dist, len, bestd[N], vec[max_size];
   long long words, size, a, b, c, d, cn, bi[100];
   float *M;
@@ -46,11 +56,14 @@ int main(int argc, char **argv) {
     printf("Usage: ./distance <FILE>\nwhere FILE contains word projections in the BINARY FORMAT\n");
     return 0;
   }
-  // strcpy(file_name, argv[1]);
   int fnp = ArgPos((char *)"-f", argc, argv);
   strcpy(file_name, argv[fnp+1]);
   int isbinary = ArgPos((char *)"-b", argc, argv);
-  if(isbinary != -1 && atoi(argv[isbinary+1]) == 1) f = fopen(file_name, "r");
+  // printf("%d\n\n", isbinary);
+  if(isbinary != -1 && atoi(argv[isbinary+1]) == 1)
+  {
+    f = fopen(file_name, "r");
+  }
   else f = fopen(file_name, "rb");
 
   if (f == NULL) {
@@ -62,7 +75,7 @@ int main(int argc, char **argv) {
   vocab = (char *)malloc((long long)words * max_w * sizeof(char));
   for (a = 0; a < N; a++) bestw[a] = (char *)malloc(max_size * sizeof(char));
   M = (float *)malloc((long long)words * (long long)size * sizeof(float));
-  if (M == NULL) {
+  if (M == NULL || vocab == NULL) {
     printf("Cannot allocate memory: %lld MB    %lld  %lld\n", (long long)words * size * sizeof(float) / 1048576, words, size);
     return -1;
   }
@@ -73,7 +86,8 @@ int main(int argc, char **argv) {
       if (feof(f) || (vocab[b * max_w + a] == ' ')) break;
       if ((a < max_w) && (vocab[b * max_w + a] != '\n')) a++;
     }
-    vocab[b * max_w + a] = 0;
+    vocab[b * max_w + a] = '\0';
+    // if(!isbinary) fscanf(f, "%s", &vocab[b * max_w]);
     for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
     len = 0;
     for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
@@ -83,50 +97,31 @@ int main(int argc, char **argv) {
   fclose(f);
 
   // i 代表第 i 個參數, 嘗試看看寫可以吃 n 個, 或是讓他 call n 次
-  int i = 0;
+
   // int argcCount = 0;
   // while (argcCount > 0) {
+    int i = 0, e = 1;
+    const char *del = ",";
     for (a = 0; a < N; a++) bestd[a] = 0;
     for (a = 0; a < N; a++) bestw[a][0] = 0;
-    // printf("Enter word or sentence (EXIT to break): ");
-    i = ArgPos((char *)"-w", argc, argv);
-    strcpy(st1, argv[i+1]);
-    if(strlen(st1) > max_size-1)
-    {
-      printf("Word byte is too large.");
-      return -1;
+    i = ArgPos((char *)"-v", argc, argv);
+    for(a = 0; a < strlen(argv[i+1]); a++)
+    { // count , in argv
+      if(argv[i+1][a] == ',') e++;
     }
-    cn = 0;
+    // printf("%d", e);
+    char **arr;
+    arr = (char **)malloc(2*size*sizeof(float)); // 這邊原本不夠大
+    // getNearests(81819,0x7fff997203c0) malloc:
+    // *** error for object 0x7ffb2c402778: incorrect checksum for freed object - object was probably modified after being freed.
+    // *** set a breakpoint in malloc_error_break to debug
+    split(arr, argv[i+1], del);
+    for(a=0; a<size; a++) vec[a] = atof(arr[a]);
+    // for(a=0; a<size; a++) printf("%f ", vec[a]);
+    free(arr);
+    cn = 1;
     b = 0;
     c = 0;
-    while (1) {
-      st[cn][b] = st1[c];
-      b++;
-      c++;
-      st[cn][b] = 0;
-      if (st1[c] == 0) break;
-      if (st1[c] == ' ') {
-        cn++;
-        b = 0;
-        c++;
-      }
-    }
-    cn++;
-    for (a = 0; a < cn; a++) {
-      for (b = 0; b < words; b++) if (!strcmp(&vocab[b * max_w], st[a])) break;
-      if (b == words) b = -1;
-      bi[a] = b;
-      // printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
-      if (b == -1) {
-        printf("Out of dictionary word,%s\n", st[a]);
-        return -2;
-      }
-    }
-    for (a = 0; a < size; a++) vec[a] = 0;
-    for (b = 0; b < cn; b++) {
-      if (bi[b] == -1) continue;
-      for (a = 0; a < size; a++) vec[a] += M[a + bi[b] * size];
-    }
     len = 0;
     for (a = 0; a < size; a++) len += vec[a] * vec[a];
     len = sqrt(len);
@@ -153,5 +148,7 @@ int main(int argc, char **argv) {
     }
     for (a = 0; a < N; a++) printf("%s,%f\n", bestw[a], bestd[a]);
   // }
+  free(M);
+  free(vocab);
   return 0;
 }
