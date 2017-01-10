@@ -214,8 +214,8 @@ Sample Output:
 ### w2v.getSimilarAsync(word = "word", returnType = "array", callback)
 ...........................Constructing...............................
 
-### getNearests(vector, returnType = "array")
-### getNearestsSync(vector, returnType = "array")
+### w2v.getNearests(vector, returnType = "array")
+### w2v.getNearestsSync(vector, returnType = "array")
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | vector        | Vector to be searched.                  |     "word"    |
