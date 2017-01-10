@@ -21,7 +21,6 @@
   "author": "leexun",
   "license": "Apache-2.0",
   "dependencies": {
-    "nodejieba": "^2.2.4",
     "lodash": "^4.17.4",
     "change-case": "^2.1.5",
     "charm": "^1.0.0",
