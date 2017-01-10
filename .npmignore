@@ -1,6 +1,9 @@
 # Git
 .git*
 
+# .DS_Store #
+.DS_Store
+
 # Utilities #
 #############
 yarn.lock
