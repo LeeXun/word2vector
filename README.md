@@ -62,7 +62,7 @@ w2v.load( modelFile );
 ```
 
 ### w2v.getVector(word="word")
-<b style='color:red'>Warning</b>: Don't use this in loop. Recalling binary file comsumes time.
+<b>Warning</b>: Don't use this in loop. Recalling binary file comsumes time.
 | Params        |   Description                | Default Value |
 | ------------- |:-------------:| -----:|
 | word          | String to be searched.       |     "word"    |
@@ -92,7 +92,7 @@ null // Return null if this word is not in model.
 ```
 
 ### w2v.getVectors(words=["word1", "word2"], returnType = "array")
-<b style='color:red'>Warning<b>: If your array has over 27000 words(chinese byte unit). Splitting in loops to avoid memory alloc limit.
+<b>Warning</b>: If your array has over 27000 words(chinese byte unit). Splitting in loops to avoid memory alloc limit.
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | words          | Array of strings to be searched.       |     "word"    |
