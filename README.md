@@ -96,27 +96,27 @@ Sample Output:
 <tr>
 <td>
 Example:
-``` javascript
-var w2v = require("./lib");  //  過年之前  web 前端 實習工程師 6/30 170 hour
+<code>
+var w2v = require("./lib");  
 var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
 console.log(w2v.getVectors(["唐三藏", "孫悟空"]));
-```
+</code>
 </td>
 <td>
 Example:
-``` javascript
-var w2v = require("./lib");  //  過年之前  web 前端 實習工程師 6/30 170 hour
+<code lang="js">
+var w2v = require("./lib");  
 var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
 console.log(w2v.getVectors(["唐三藏", "孫悟空"], "Object"));
-```
+</code>
 </td>
 </tr>
 <tr>
 <td>
 Sample Output:
-``` javascript
+<code lang="js">
 // Array Type
 [ { word: '唐三藏',
     vector:
@@ -142,7 +142,7 @@ Sample Output:
        0.05646,
        0.099059,
        -0.419282 ] } ]
-```
+</code>
 </td>
 <td>
 ``` javascript
