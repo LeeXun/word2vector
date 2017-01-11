@@ -18,7 +18,7 @@ var w2v = require( 'word2vector' );
 # API Document:
 -----------
 ## Overview
-[train](#w2v.train( trainFile, modelFile, options, callback ))
+[train](#w2vtrain-trainfile-modelfile-options-callback-)
 [load](#w2v.load( modelFile ))
 [getVector](#w2v.getVector(word="word"))
 [getVectors](#w2v.getVectors(words=["word1", "word2"], returnType = "array"))
