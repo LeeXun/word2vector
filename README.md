@@ -92,31 +92,16 @@ Sample Output:
 | ------------- |:-------------:| -----:|
 | words          | Array of strings to be searched.       |     "word"    |
 | returnType    | return Array or Object type             | Array         |
-<table>
-<tr>
-<td>
 Example:
-<code>
+``` javascript
 var w2v = require("./lib");  
 var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
 console.log(w2v.getVectors(["唐三藏", "孫悟空"]));
-</code>
-</td>
-<td>
-Example:
-<code lang="js">
-var w2v = require("./lib");  
-var modelFile = "./data/test.model.bin";
-w2v.load( modelFile );
 console.log(w2v.getVectors(["唐三藏", "孫悟空"], "Object"));
-</code>
-</td>
-</tr>
-<tr>
-<td>
+```
 Sample Output:
-<code lang="js">
+``` javascript
 // Array Type
 [ { word: '唐三藏',
     vector:
@@ -142,37 +127,30 @@ Sample Output:
        0.05646,
        0.099059,
        -0.419282 ] } ]
-</code>
-</td>
-<td>
-``` javascript
-// Object Type
-{ '唐三藏':
-   [ 0.021231,
-     -0.177243,
-     -0.679957,
-     -0.576205,
-     0.018885,
-     0.000147,
-     0.065118,
-     -0.083467,
-     0.064625,
-     -0.397542 ],
-  '孫悟空':
-   [ 0.104406,
-     -0.160019,
-     -0.604506,
-     -0.622804,
-     0.039482,
-     -0.120058,
-     0.073555,
-     0.05646,
-     0.099059,
-     -0.419282 ] }
+ // Object Type
+ { '唐三藏':
+    [ 0.021231,
+      -0.177243,
+      -0.679957,
+      -0.576205,
+      0.018885,
+      0.000147,
+      0.065118,
+      -0.083467,
+      0.064625,
+      -0.397542 ],
+   '孫悟空':
+    [ 0.104406,
+      -0.160019,
+      -0.604506,
+      -0.622804,
+      0.039482,
+      -0.120058,
+      0.073555,
+      0.05646,
+      0.099059,
+      -0.419282 ] }
 ```
-</td>
-</tr>
-</table>
 ### w2v.getSimilar(word = "word", returnType = "array")
 ### w2v.getSimilarSync(word = "word", returnType = "array")
 Return 40ish words that is similar to "word".
@@ -182,49 +160,36 @@ Return 40ish words that is similar to "word".
 | returnType    | return Array or Object type             | Array         |
 Example:
 ``` javascript
-var w2v = require("../lib");
-var modelFile = "./test.model.bin";
+var w2v = require("./lib");
+var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
-console.log(w2v.getSimilar()); //
+console.log(w2v.getSimilar("唐三藏"));
+console.log(w2v.getSimilar("唐三藏"), "object");
 ```
 Sample Output:
 ``` javascript
 // Array Type
-[ { word: '唐三藏', cosineDistance: '0.974369' },
-  { word: '林黛玉', cosineDistance: '0.951022' },
-  { word: '神通廣大', cosineDistance: '0.941816' },
-  { word: '賈寶玉', cosineDistance: '0.936503' },
-  { word: '吳承恩', cosineDistance: '0.933682' },
-  { word: '北地', cosineDistance: '0.927531' },
-  { word: '乾燥', cosineDistance: '0.923066' },
-  { word: '薊', cosineDistance: '0.921219' },
-  { word: '沙悟淨', cosineDistance: '0.920015' },
-  { word: '楚霸王', cosineDistance: '0.918935' },
-  { word: '尋寶', cosineDistance: '0.912401' },
-  { word: '唐僧', cosineDistance: '0.909721' },
-  { word: '蒲松齡', cosineDistance: '0.908023' },
-  { word: '梁山泊', cosineDistance: '0.901515' },
-  { word: '日月蝕', cosineDistance: '0.900456' },
-  { word: '薩鎮冰', cosineDistance: '0.900079' },
-  { word: '聊齋志異', cosineDistance: '0.898957' }... ...]
+[ { word: '孫悟空', cosineDistance: 0.974369 },
+  { word: '吳承恩', cosineDistance: 0.96686 },
+  { word: '林黛玉', cosineDistance: 0.966664 },
+  { word: '北地', cosineDistance: 0.96264 },
+  { word: '賈寶玉', cosineDistance: 0.962137 },
+  { word: '楚霸王', cosineDistance: 0.955795 },
+  { word: '梁山泊', cosineDistance: 0.932804 },
+  { word: '濮陽', cosineDistance: 0.927542 },
+  { word: '黃天霸', cosineDistance: 0.927459 },
+  { word: '英雄豪傑', cosineDistance: 0.921575 }, ...]
 // Object Type
-{ '唐三藏': '0.974369',
-  '林黛玉': '0.951022',
-  '神通廣大': '0.941816',
-  '賈寶玉': '0.936503',
-  '吳承恩': '0.933682',
-  '北地': '0.927531',
-  '乾燥': '0.923066',
-  '薊': '0.921219',
-  '沙悟淨': '0.920015',
-  '楚霸王': '0.918935',
-  '尋寶': '0.912401',
-  '唐僧': '0.909721',
-  '蒲松齡': '0.908023',
-  '梁山泊': '0.901515',
-  '日月蝕': '0.900456',
-  '薩鎮冰': '0.900079',
-  '聊齋志異': '0.898957',... ...}
+{ '孫悟空': 0.974369,
+  '吳承恩': 0.96686,
+  '林黛玉': 0.966664,
+  '北地': 0.96264,
+  '賈寶玉': 0.962137,
+  '楚霸王': 0.955795,
+  '梁山泊': 0.932804,
+  '濮陽': 0.927542,
+  '黃天霸': 0.927459,
+  '英雄豪傑': 0.921575, ...}
 ```
 
 ### w2v.getSimilarAsync(word = "word", returnType = "array", callback)
@@ -241,9 +206,9 @@ Example1:
 var w2v = require("../lib");
 var modelFile = "./test.model.bin";
 w2v.load( modelFile );
-var a = w2v.getNearest(w2v.getVector('唐三藏'));
+var a = w2v.getNearest(w2v.getVector("唐三藏"));
+// this is equal to use w2v.getSimilar("唐三藏");
 console.log(a);
-// vector can do substractioin, while this didn't  mean anything. But you can create a vector by yourself.
 ```
 Sample Output1:
 ``` javascript
