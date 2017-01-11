@@ -53,45 +53,30 @@ w2v.load( modelFile );
 // console.log(w2v.getSimilar());
 ```
 
-### w2v.getVector(word="word", returnType = "array")
+### w2v.getVector(word="word")
 | Params        |   Description                | Default Value |
 | ------------- |:-------------:| -----:|
 | word          | String to be searched.       |     "word"    |
-| returnType    | return Array or Object type  | Array         |
 Example:
 ``` javascript
 var w2v = require("../lib");
 var modelFile = "./test.model.bin";
 w2v.load( modelFile );
-console.log(w2v.getVector("word", "array"));
+console.log(w2v.getVector("word"));
 ```
 Sample Output:
 ``` javascript
-// Object Type
-[ { word: '唐三藏',
-    vector:
-     [ '0.021231',
-       '-0.177243',
-       '-0.679957',
-       '-0.576205',
-       '0.018885',
-       '0.000147',
-       '0.065118',
-       '-0.083467',
-       '0.064625',
-       '-0.397542' ] } ]
-// Object Type
-{ '唐三藏':
-   [ '0.021231',
-     '-0.177243',
-     '-0.679957',
-     '-0.576205',
-     '0.018885',
-     '0.000147',
-     '0.065118',
-     '-0.083467',
-     '0.064625',
-     '-0.397542' ] }
+// Array Type Only
+[ 0.021231,
+  -0.177243,
+  -0.679957,
+  -0.576205,
+  0.018885,
+  0.000147,
+  0.065118,
+  -0.083467,
+  0.064625,
+  -0.397542 ]
 ```
 
 ### w2v.getVector(words=["word1", "word2"], returnType = "array")
