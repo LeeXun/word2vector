@@ -1,25 +1,33 @@
 # word2vector NodeJS Interface
 =============
-This is a Node.js interface for Google's word2vector.
+This is a Node.js interface for Google's [word2vector](https://code.google.com/archive/p/word2vec/).
 
 # Supports Binary model only now.
 # Warning: Windows is not supported.
 
 # Installation
 Linux, Unix OS are supported.
-This package also install node-jieba
 Install it via npm:
 ``` bash
 npm install word2vector --save
 ```
-
-To use it inside Node.js, require the module as follows:
-
+In Node.js, require the module as below:
 ``` javascript
 var w2v = require( 'word2vector' );
 ```
-# Document
-## API
+# API Document:
+-----------
+## Overview
+[train](#w2v.train( trainFile, modelFile, options, callback ))
+[load](#w2v.load( modelFile ))
+[getVector](#w2v.getVector(word="word"))
+[getVectors](#w2v.getVectors(words=["word1", "word2"], returnType = "array"))
+[getSimilar](w2v.getSimilar(word = "word", returnType = "array"))
+[getSimilarSync](w2v.getSimilar(word = "word", returnType = "array"))
+[getNearest](w2v.getNearest(vector, returnType = "array"))
+[getNearestSync](w2v.getNearestSync(vector, returnType = "array"))
+
+-----------
 ### w2v.train( trainFile, modelFile, options, callback )
 [Click here to see example TrainFile format.](https://github.com/LeeXun/word2vector/blob/master/data/train.data) <br>
 Example:
@@ -79,70 +87,92 @@ Sample Output:
   -0.397542 ]
 ```
 
-### w2v.getVector(words=["word1", "word2"], returnType = "array")
+### w2v.getVectors(words=["word1", "word2"], returnType = "array")
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | words          | Array of strings to be searched.       |     "word"    |
 | returnType    | return Array or Object type             | Array         |
+<table>
+<tr>
+<td>
 Example:
 ``` javascript
-var w2v = require("../lib");
-var modelFile = "./test.model.bin";
+var w2v = require("./lib");  //  過年之前  web 前端 實習工程師 6/30 170 hour
+var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
-console.log(w2v.getVectors(["word1", "word2"], "array"));
+console.log(w2v.getVectors(["唐三藏", "孫悟空"]));
 ```
+</td>
+<td>
+Example:
+``` javascript
+var w2v = require("./lib");  //  過年之前  web 前端 實習工程師 6/30 170 hour
+var modelFile = "./data/test.model.bin";
+w2v.load( modelFile );
+console.log(w2v.getVectors(["唐三藏", "孫悟空"], "Object"));
+```
+</td>
+</tr>
+<tr>
+<td>
 Sample Output:
 ``` javascript
 // Array Type
 [ { word: '唐三藏',
     vector:
-     [ '0.021231',
-       '-0.177243',
-       '-0.679957',
-       '-0.576205',
-       '0.018885',
-       '0.000147',
-       '0.065118',
-       '-0.083467',
-       '0.064625',
-       '-0.397542' ] },
-  { word: '拿破崙',
+     [ 0.021231,
+       -0.177243,
+       -0.679957,
+       -0.576205,
+       0.018885,
+       0.000147,
+       0.065118,
+       -0.083467,
+       0.064625,
+       -0.397542 ] },
+  { word: '孫悟空',
     vector:
-     [ '-0.064839',
-       '0.605826',
-       '0.100750',
-       '0.016323',
-       '0.330518',
-       '0.362956',
-       '0.582664',
-       '-0.130151',
-       '0.135946',
-       '-0.049564' ] } ]
+     [ 0.104406,
+       -0.160019,
+       -0.604506,
+       -0.622804,
+       0.039482,
+       -0.120058,
+       0.073555,
+       0.05646,
+       0.099059,
+       -0.419282 ] } ]
+```
+</td>
+<td>
+``` javascript
 // Object Type
 { '唐三藏':
-   [ '0.021231',
-     '-0.177243',
-     '-0.679957',
-     '-0.576205',
-     '0.018885',
-     '0.000147',
-     '0.065118',
-     '-0.083467',
-     '0.064625',
-     '-0.397542' ],
-  '拿破崙':
-   [ '-0.064839',
-     '0.605826',
-     '0.100750',
-     '0.016323',
-     '0.330518',
-     '0.362956',
-     '0.582664',
-     '-0.130151',
-     '0.135946',
-     '-0.049564' ] }
+   [ 0.021231,
+     -0.177243,
+     -0.679957,
+     -0.576205,
+     0.018885,
+     0.000147,
+     0.065118,
+     -0.083467,
+     0.064625,
+     -0.397542 ],
+  '孫悟空':
+   [ 0.104406,
+     -0.160019,
+     -0.604506,
+     -0.622804,
+     0.039482,
+     -0.120058,
+     0.073555,
+     0.05646,
+     0.099059,
+     -0.419282 ] }
 ```
-
+</td>
+</tr>
+</table>
 ### w2v.getSimilar(word = "word", returnType = "array")
 ### w2v.getSimilarSync(word = "word", returnType = "array")
 Return 40ish words that is similar to "word".
@@ -200,13 +230,34 @@ Sample Output:
 ### w2v.getSimilarAsync(word = "word", returnType = "array", callback)
 ...........................Constructing...............................
 
-### w2v.getNearests(vector, returnType = "array")
-### w2v.getNearestsSync(vector, returnType = "array")
+### w2v.getNearest(vector, returnType = "array")
+### w2v.getNearestSync(vector, returnType = "array")
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | vector        | Vector to be searched.                  |     "word"    |
 | returnType    | return Array or Object type             | Array         |
-Example:
+Example1:
+``` javascript
+var w2v = require("../lib");
+var modelFile = "./test.model.bin";
+w2v.load( modelFile );
+var a = w2v.getNearest(w2v.getVector('唐三藏'));
+console.log(a);
+// vector can do substractioin, while this didn't  mean anything. But you can create a vector by yourself.
+```
+Sample Output1:
+``` javascript
+[ { word: '唐三藏', cosineDistance: 1 },
+  { word: '孫悟空', cosineDistance: 0.974369 },
+  { word: '吳承恩', cosineDistance: 0.96686 },
+  { word: '林黛玉', cosineDistance: 0.966664 },
+  { word: '北地', cosineDistance: 0.96264 },
+  { word: '賈寶玉', cosineDistance: 0.962137 },
+  { word: '楚霸王', cosineDistance: 0.955795 },
+  { word: '梁山泊', cosineDistance: 0.932804 },
+  { word: '濮陽', cosineDistance: 0.927542 }, ... ...]
+```
+Example2:
 ``` javascript
 var w2v = require("../lib");
 var modelFile = "./test.model.bin";
@@ -215,18 +266,21 @@ var a = w2v.getVectors(['唐三藏'], "Object")['唐三藏'];
 var b = w2v.getVectors(['孫悟空'], "Object")['孫悟空'];
 var c = [];
 for(var i=0; i<a.length; i++) c.push(a[i] - b[i]);
-var a = w2v.getNearests(c);
-console.log(a);
+var d = w2v.getNearest(c);
+console.log(d);
 // vector can do substractioin, while this didn't  mean anything. But you can create a vector by yourself.
 ```
-Sample Output:
+Sample Output2:
 ``` javascript
-[ { word: '唐三藏', cosineDistance: '1.000000' },
-  { word: '孫悟空', cosineDistance: '0.974369' },
-  { word: '吳承恩', cosineDistance: '0.966860' },
-  { word: '林黛玉', cosineDistance: '0.966664' },
-  { word: '北地', cosineDistance: '0.962640' },
-  { word: '賈寶玉', cosineDistance: '0.962137' },
-  { word: '楚霸王', cosineDistance: '0.955795' },
-  { word: '梁山泊', cosineDistance: '0.932804' }... ... ]
+[ { word: '蒙上帝', cosineDistance: 0.794216 },
+  { word: '阿房宮賦', cosineDistance: 0.787006 },
+  { word: '玄秘', cosineDistance: 0.770159 },
+  { word: '檀香山', cosineDistance: 0.755662 },
+  { word: '先賢祠', cosineDistance: 0.746278 },
+  { word: '蘇萊曼', cosineDistance: 0.745826 },
+  { word: '盧梭', cosineDistance: 0.704465 },
+  { word: '夏威夷', cosineDistance: 0.700885 },
+  { word: '伏爾泰', cosineDistance: 0.698588 },
+  { word: '杜爾哥', cosineDistance: 0.688763 },
+  { word: '祝你們', cosineDistance: 0.687257 } ... ...],
 ```
