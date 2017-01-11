@@ -19,13 +19,13 @@ var w2v = require( 'word2vector' );
 -----------
 ## Overview
 [train](#w2vtrain-trainfile-modelfile-options-callback-)
-[load](#w2v.load( modelFile ))
-[getVector](#w2v.getVector(word="word"))
-[getVectors](#w2v.getVectors(words=["word1", "word2"], returnType = "array"))
-[getSimilar](w2v.getSimilar(word = "word", returnType = "array"))
-[getSimilarSync](w2v.getSimilar(word = "word", returnType = "array"))
-[getNearest](w2v.getNearest(vector, returnType = "array"))
-[getNearestSync](w2v.getNearestSync(vector, returnType = "array"))
+[load](#w2vload-modelfile-)
+[getVector](#w2vgetvectorwordword)
+[getVectors](#w2vgetvectorswordsword1-word2-returntype--array)
+[getSimilar](#w2vgetsimilarword--word-returntype--array)
+[getSimilarSync](#w2vgetsimilarsyncword--word-returntype--array)
+[getNearest](#w2vgetnearestvector-returntype--array)
+[getNearestSync](#w2vgetnearestsyncvector-returntype--array)
 
 -----------
 ### w2v.train( trainFile, modelFile, options, callback )
