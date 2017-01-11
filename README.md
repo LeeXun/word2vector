@@ -241,3 +241,27 @@ Sample Output2:
   { word: '杜爾哥', cosineDistance: 0.688763 },
   { word: '祝你們', cosineDistance: 0.687257 } ... ...],
 ```
+### w2v.similarity(word1 = "word1", word2 = "word2")
+Return 40ish words that is similar to "word".
+| Params        |   Description                           | Default Value |
+| ------------- |:-------------:| -----:|
+| word1          | First Strings to be compared.       |     No default value    |
+| word2    | Second Strings to be compared.            |     No default value    |
+Example:
+``` javascript
+'use strict';
+var w2v = require("./lib");
+var modelFile = "./data/test.model.bin";
+w2v.load( modelFile );
+var a = w2v.similarity("唐三藏", "孫悟空"); //  0.974368825898
+console.log(a);
+var b = w2v.similarity("唐三藏", "李洵"); //  0.974368825898
+console.log(b);
+```
+Sample Output:
+``` javascript
+0.974368825898
+
+'李洵' is not found in the model.
+false
+```
