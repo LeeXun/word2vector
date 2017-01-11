@@ -1,11 +1,16 @@
 'use strict';
 var w2v = require("./lib");
 var modelFile = "./data/test.model.bin";
-// var w2v = new Word2Vector( modelFile );
 w2v.load( modelFile );
-var a = w2v.getVector('唐三藏');
-// var b = w2v.getVectors(['孫悟空'], "Object")['孫悟空'];
-// var c = [];
-// for(var i=0; i<a.length; i++) c.push(a[i] - b[i]);
-var d = w2v.getNearest(a);
-console.log(d);
+console.log(w2v.getVector("孫悟空"));
+console.log(w2v.getVector("李洵"));
+function similarity(w1, w2)
+{
+  var v1 = this.getVector(w1);
+  var v2 = this.getVector(w2);
+  sum = 0;
+	for ( i = 0; i < size; i++ ) {
+		sum += vecs[0][i] * vecs[1][i];
+	}
+	return sum;
+}

@@ -152,8 +152,7 @@ int main(int argc, char **argv) {
       // printf("%f\n", M[a + bi[a] * size]);
       // printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
       if (b == -1) {
-        printf("Out of dictionary word,%s\n", st[a]);
-        return -2;
+        printf("Out of dictionary word,");
       }
     }
     for (a = 0; a < size; a++) vec[a] = 0;

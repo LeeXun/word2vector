@@ -97,25 +97,13 @@ Example:
 var w2v = require("./lib");  
 var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
-console.log(w2v.getVectors(["唐三藏", "孫悟空"]));
-console.log(w2v.getVectors(["唐三藏", "孫悟空"], "Object"));
+console.log(w2v.getVectors(["孫悟空", "李洵"]));
+console.log(w2v.getVectors(["孫悟空", "李洵"], "Object"));
 ```
 Sample Output:
 ``` javascript
 // Array Type
-[ { word: '唐三藏',
-    vector:
-     [ 0.021231,
-       -0.177243,
-       -0.679957,
-       -0.576205,
-       0.018885,
-       0.000147,
-       0.065118,
-       -0.083467,
-       0.064625,
-       -0.397542 ] },
-  { word: '孫悟空',
+[ { word: '孫悟空',
     vector:
      [ 0.104406,
        -0.160019,
@@ -126,30 +114,21 @@ Sample Output:
        0.073555,
        0.05646,
        0.099059,
-       -0.419282 ] } ]
- // Object Type
- { '唐三藏':
-    [ 0.021231,
-      -0.177243,
-      -0.679957,
-      -0.576205,
-      0.018885,
-      0.000147,
-      0.065118,
-      -0.083467,
-      0.064625,
-      -0.397542 ],
-   '孫悟空':
-    [ 0.104406,
-      -0.160019,
-      -0.604506,
-      -0.622804,
-      0.039482,
-      -0.120058,
-      0.073555,
-      0.05646,
-      0.099059,
-      -0.419282 ] }
+       -0.419282 ] },
+  { word: '李洵', vector: null } ]
+// Object Type
+{ '孫悟空':
+   [ 0.104406,
+     -0.160019,
+     -0.604506,
+     -0.622804,
+     0.039482,
+     -0.120058,
+     0.073555,
+     0.05646,
+     0.099059,
+     -0.419282 ],
+  '李洵': null }
 ```
 ### w2v.getSimilar(word = "word", returnType = "array")
 ### w2v.getSimilarSync(word = "word", returnType = "array")

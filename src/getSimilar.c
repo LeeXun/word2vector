@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
       bi[a] = b;
       // printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
       if (b == -1) {
-        printf("Out of dictionary word,%s\n", st[a]);
+        printf("Out of dictionary word\n");
         return -2;
       }
     }
