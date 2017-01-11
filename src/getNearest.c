@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
   strcpy(file_name, argv[fnp+1]);
   int isbinary = ArgPos((char *)"-b", argc, argv);
   // printf("%d\n\n", isbinary);
-  if(isbinary != -1 && atoi(argv[isbinary+1]) == 1)
+  if(isbinary != -1 && atoi(argv[isbinary+1]) == 0)
   {
     f = fopen(file_name, "r");
   }
@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
       if (feof(f) || (vocab[b * max_w + a] == ' ')) break;
       if ((a < max_w) && (vocab[b * max_w + a] != '\n')) a++;
     }
-    vocab[b * max_w + a] = '\0';
+    vocab[b * max_w + a] = 0;
     // if(!isbinary) fscanf(f, "%s", &vocab[b * max_w]);
     for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
     len = 0;

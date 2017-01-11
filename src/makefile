@@ -2,7 +2,7 @@ CC = gcc
 #Using -Ofast instead of -O3 might result in faster code, but is supported only by newer GCC versions
 CFLAGS = -lm -pthread -O3 -march=native -Wall -funroll-loops -Wno-unused-result -fno-stack-protector
 
-all: word2vec word2phrase distance word-analogy compute-accuracy getSimilar getVectors getNearest
+all: word2vec word2phrase distance word-analogy compute-accuracy getSimilar getVectors getNearest binModel2JSON
 
 word2vec : word2vec.c
 	$(CC) word2vec.c -o word2vec $(CFLAGS)
@@ -31,5 +31,10 @@ getNearest : getNearest.c
 	$(CC) getNearest.c -o getNearest $(CFLAGS)
 ### getNearest by leexun
 
+### binModel2JSON by leexun
+binModel2JSON : binModel2JSON.c
+	$(CC) binModel2JSON.c -o binModel2JSON $(CFLAGS)
+### binModel2JSON by leexun
+
 clean:
-	rm -rf word2vec word2phrase distance word-analogy compute-accuracy getSimilar getVectors getNearest
+	rm -rf word2vec word2phrase distance word-analogy compute-accuracy getSimilar getVectors getNearest binModel2JSON

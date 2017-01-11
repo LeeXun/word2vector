@@ -2,7 +2,7 @@
 =============
 This is a Node.js interface for Google's [word2vector](https://code.google.com/archive/p/word2vec/).
 
-# Supports Binary model only now.
+# Supports both binary model and raw text model.
 # Warning: Windows is not supported.
 
 # Installation
@@ -62,7 +62,6 @@ w2v.load( modelFile );
 ```
 
 ### w2v.getVector(word="word")
-<b>Warning</b>: Don't use this in loop. Recalling binary file comsumes time.
 | Params        |   Description                | Default Value |
 | ------------- |:-------------:| -----:|
 | word          | String to be searched.       |     "word"    |
@@ -88,11 +87,11 @@ Sample Output:
   0.05646,
   0.099059,
   -0.419282 ]
+
 null // Return null if this word is not in model.
 ```
 
 ### w2v.getVectors(words=["word1", "word2"], returnType = "array")
-<b>Warning</b>: If your array has over 27000 words(chinese byte unit). Splitting in loops to avoid memory alloc limit.
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | words          | Array of strings to be searched.       |     "word"    |
@@ -187,7 +186,7 @@ Sample Output:
 ```
 
 ### w2v.getSimilarAsync(word = "word", returnType = "array", callback)
-...........................Constructing...............................
+...........................Discarded.................................
 
 ### w2v.getNearest(vector, returnType = "array")
 ### w2v.getNearestSync(vector, returnType = "array")
@@ -264,6 +263,65 @@ Sample Output:
 ``` javascript
 0.974368825898
 
-'李洵' is not found in the model.
+'李洵' is not found in the model. // error alert in console
 false
+```
+### w2v.substract(word1 = "word1", word2 = "word2")
+Return 40ish words that is similar to "word".
+| Params        |   Description                           | Default Value |
+| ------------- |:-------------:| -----:|
+| word1          | Subtrahend       |     No default value    |
+| word2    | Minuend            |     No default value    |
+Example:
+``` javascript
+'use strict';
+var w2v = require("./lib");
+var modelFile = "./data/test.model.bin";
+w2v.load( modelFile );
+var a = w2v.substract("孫悟空", "孫悟空");
+console.log(a);
+```
+Sample Output:
+``` javascript
+[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+```
+### w2v.add(word1 = "word1", word2 = "word2")
+Return 40ish words that is similar to "word".
+| Params        |   Description                           | Default Value |
+| ------------- |:-------------:| -----:|
+| word1          | Summand       |     No default value    |
+| word2    | Addend           |     No default value    |
+Example:
+``` javascript
+'use strict';
+var w2v = require("./lib");
+var modelFile = "./data/test.model.bin";
+w2v.load( modelFile );
+var a = w2v.add("孫悟空", "孫悟空");
+var b = w2v.getVector("孫悟空");
+console.log(a);
+console.log(b);
+```
+Sample Output:
+``` javascript
+[ 0.208812,
+  -0.320038,
+  -1.209012,
+  -1.245608,
+  0.078964,
+  -0.240116,
+  0.14711,
+  0.11292,
+  0.198118,
+  -0.838564 ]
+[ 0.104406,
+  -0.160019,
+  -0.604506,
+  -0.622804,
+  0.039482,
+  -0.120058,
+  0.073555,
+  0.05646,
+  0.099059,
+  -0.419282 ]
 ```

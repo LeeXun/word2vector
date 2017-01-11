@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
   int fnp = ArgPos((char *)"-f", argc, argv);
   strcpy(file_name, argv[fnp+1]);
   int isbinary = ArgPos((char *)"-b", argc, argv);
-  if(isbinary != -1 && atoi(argv[isbinary+1]) == 1) f = fopen(file_name, "r");
+  if(isbinary != -1 && atoi(argv[isbinary+1]) == 0) f = fopen(file_name, "r");
   else f = fopen(file_name, "rb");
 
   if (f == NULL) {

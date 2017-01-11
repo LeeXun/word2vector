@@ -2,12 +2,7 @@
 var w2v = require("./lib");
 var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
-var test = [];
-
-console.time("similarity");
-console.time("loop");
-for(var i=0; i<27000; i++)
-  test.push("唐三藏");
-console.timeEnd("loop");
-w2v.getVectors(test);
-console.timeEnd("similarity");
+var a = w2v.add("孫悟空", "孫悟空");
+var b = w2v.getVector("孫悟空");
+console.log(a);
+console.log(b);
