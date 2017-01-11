@@ -12,18 +12,22 @@
   },
   "keywords": [
     "word2vector",
+    "word2vec",
+    "word",
+    "vec",
     "machine learning",
     "chinese",
     "deep-learning",
     "向量",
-    "vector"
+    "vector",
+    "文字",
+    "機器學習"
   ],
   "author": "leexun",
   "license": "Apache-2.0",
   "dependencies": {
     "lodash": "^4.17.4",
     "change-case": "^2.1.5",
-    "charm": "^1.0.0",
     "mime": "^1.2.11"
   },
   "devDependencies": {
