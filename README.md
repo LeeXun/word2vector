@@ -67,24 +67,27 @@ w2v.load( modelFile );
 | word          | String to be searched.       |     "word"    |
 Example:
 ``` javascript
-var w2v = require("../lib");
-var modelFile = "./test.model.bin";
+'use strict';
+var w2v = require("./lib");
+var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
-console.log(w2v.getVector("word"));
+console.log(w2v.getVector("孫悟空"));
+console.log(w2v.getVector("李洵"));
 ```
 Sample Output:
 ``` javascript
 // Array Type Only
-[ 0.021231,
-  -0.177243,
-  -0.679957,
-  -0.576205,
-  0.018885,
-  0.000147,
-  0.065118,
-  -0.083467,
-  0.064625,
-  -0.397542 ]
+[ 0.104406,
+  -0.160019,
+  -0.604506,
+  -0.622804,
+  0.039482,
+  -0.120058,
+  0.073555,
+  0.05646,
+  0.099059,
+  -0.419282 ]
+null // Return null if this word is not in model.
 ```
 
 ### w2v.getVectors(words=["word1", "word2"], returnType = "array")
@@ -116,6 +119,8 @@ Sample Output:
        0.099059,
        -0.419282 ] },
   { word: '李洵', vector: null } ]
+  // this will trigger a error log in console:
+  //'李洵' is not found in the model.
 // Object Type
 { '孫悟空':
    [ 0.104406,
@@ -129,6 +134,8 @@ Sample Output:
      0.099059,
      -0.419282 ],
   '李洵': null }
+  // this will trigger a error log in console:
+  //'李洵' is not found in the model.
 ```
 ### w2v.getSimilar(word = "word", returnType = "array")
 ### w2v.getSimilarSync(word = "word", returnType = "array")
@@ -143,7 +150,9 @@ var w2v = require("./lib");
 var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
 console.log(w2v.getSimilar("唐三藏"));
-console.log(w2v.getSimilar("唐三藏"), "object");
+console.log(w2v.getSimilar("李洵"));
+console.log(w2v.getSimilar("唐三藏", "object"));
+console.log(w2v.getSimilar("李洵", "object"));
 ```
 Sample Output:
 ``` javascript
@@ -158,6 +167,8 @@ Sample Output:
   { word: '濮陽', cosineDistance: 0.927542 },
   { word: '黃天霸', cosineDistance: 0.927459 },
   { word: '英雄豪傑', cosineDistance: 0.921575 }, ...]
+// Return empty [] if this word is not in model.
+[]
 // Object Type
 { '孫悟空': 0.974369,
   '吳承恩': 0.96686,
@@ -169,6 +180,8 @@ Sample Output:
   '濮陽': 0.927542,
   '黃天霸': 0.927459,
   '英雄豪傑': 0.921575, ...}
+// Return empty {} if this word is not in model.
+{}
 ```
 
 ### w2v.getSimilarAsync(word = "word", returnType = "array", callback)
