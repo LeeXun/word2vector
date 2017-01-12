@@ -1,10 +1,7 @@
-'use strict';
 var w2v = require("./lib");
 var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
-// var a = w2v.add("孫悟空", "孫悟空");
-// var b = w2v.similarity("唐三藏", "孫悟空");
-// var b = w2v.getSimilarWords("臺灣");
-var b = w2v.getNeighbors(w2v.getVector("臺灣"));
-// console.log(a);
-console.log(b);
+console.log(w2v.getSimilarWords("唐三藏"));
+console.log(w2v.getSimilarWords("李洵"));
+console.log(w2v.getSimilarWords("唐三藏", {N:10, returnType: "Object"}));
+console.log(w2v.getSimilarWords("李洵", {N:10, returnType: "Object"}));
