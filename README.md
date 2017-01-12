@@ -23,7 +23,7 @@ var w2v = require( 'word2vector' );
 [getVector](#w2vgetvectorwordword)
 [getVectors](#w2vgetvectorswordsword1-word2-returntype--array)
 [getSimilarWords](#w2vgetsimilarword--word-returntype--array)
-[getNearest](#w2vgetnearestvector-returntype--array)
+[getNeighbors](#w2vgetnearestvector-returntype--array)
 
 -----------
 ### w2v.train( trainFile, modelFile, options, callback )
@@ -56,7 +56,7 @@ Example:
 var w2v = require("../lib");
 var modelFile = "./test.model.bin";
 w2v.load( modelFile );
-// console.log(w2v.getSimilarWords());
+// console.log(w2v.getSimilarWordsWords());
 ```
 
 ### w2v.getVector(word="word")
@@ -136,12 +136,13 @@ Sample Output:
   // this will trigger a error log in console:
   //'李洵' is not found in the model.
 ```
-### w2v.getSimilarWords(word = "word", returnType = "array")
+### w2v.getSimilarWords(word = "word", options = {})
 Return 40ish words that is similar to "word".
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | word          | Strings to be searched.                 |     "word"    |
-| returnType    | return Array or Object type             | Array         |
+| options.N    | return topN results             | Array         |
+| options.returnType    | return Array or Object type             | Array         |
 Example:
 ``` javascript
 var w2v = require("./lib");
@@ -149,7 +150,7 @@ var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
 console.log(w2v.getSimilarWords("唐三藏"));
 console.log(w2v.getSimilarWords("李洵"));
-console.log(w2v.getSimilar("唐三藏", "object"));
+console.log(w2v.getSimilarWords("唐三藏", "object"));
 console.log(w2v.getSimilarWords("李洵", "object"));
 ```
 Sample Output:
@@ -185,18 +186,19 @@ Sample Output:
 ### w2v.getSimilarAsync(word = "word", returnType = "array", callback)
 ...........................Discarded.................................
 
-### w2v.getNearest(vector, returnType = "array")
-### w2v.getNearestSync(vector, returnType = "array")
+### getNeighbors(vector, options = {})
+function
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | vector        | Vector to be searched.                  |     "word"    |
-| returnType    | return Array or Object type             | Array         |
+| options.N    | return topN results             | Array         |
+| options.returnType    | return Array or Object type             | Array         |
 Example1:
 ``` javascript
 var w2v = require("../lib");
 var modelFile = "./test.model.bin";
 w2v.load( modelFile );
-var a = w2v.getNearest(w2v.getVector("唐三藏"));
+var a = w2v.getNeighbors(w2v.getVector("唐三藏"));
 // this is equal to use w2v.getSimilarWords("唐三藏");
 console.log(a);
 ```
@@ -221,7 +223,7 @@ var a = w2v.getVectors(['唐三藏'], "Object")['唐三藏'];
 var b = w2v.getVectors(['孫悟空'], "Object")['孫悟空'];
 var c = [];
 for(var i=0; i<a.length; i++) c.push(a[i] - b[i]);
-var d = w2v.getNearest(c);
+var d = w2v.getNeighbors(c);
 console.log(d);
 // vector can do substractioin, while this didn't  mean anything. But you can create a vector by yourself.
 ```
@@ -240,11 +242,16 @@ Sample Output2:
   { word: '祝你們', cosineDistance: 0.687257 } ... ...],
 ```
 ### w2v.similarity(word1 = "word1", word2 = "word2")
+### w2v.similarity(vector1 = [], word2 = "word2")
+### w2v.similarity(word1 = "word1", vector2 = [])
+### w2v.similarity(vector1 = [], vector2 = [])
 Return 40ish words that is similar to "word".
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | word1          | First Strings to be compared.       |     No default value    |
 | word2    | Second Strings to be compared.            |     No default value    |
+| vector1    | First Vector to be compared.            |     No default value    |
+| vector2    | Second Vector to be compared.            |     No default value    |
 Example:
 ``` javascript
 'use strict';
@@ -254,6 +261,9 @@ w2v.load( modelFile );
 var a = w2v.similarity("唐三藏", "孫悟空"); //  0.974368825898
 console.log(a);
 var b = w2v.similarity("唐三藏", "李洵"); //  0.974368825898
+// same as var b = w2v.similarity("唐三藏", w2v.getVector("李洵"));
+// same as var b = w2v.similarity(w2v.getVector("唐三藏"), "李洵");
+// same as var b = w2v.similarity(w2v.getVector("唐三藏"), w2v.getVector("李洵"));
 console.log(b);
 ```
 Sample Output:
