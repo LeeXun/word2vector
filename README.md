@@ -48,9 +48,12 @@ w2v.train(trainFile, modelFile, {
   });
 ```
 
-### w2v.load( modelFile )
+### w2v.load( modelFile,?readType = "")
 Should load model before call any calcuation functions.
 Will auto detect mime_type ,but unbinary reading is still constructing.
+| Params        |   Description                           | Default Value |
+| ------------- |:-------------:| -----:|
+| readType        | Model format, pass "utf-8" if using a raw text model.  |     "bin"    |
 Example:
 ``` javascript
 var w2v = require("../lib");
@@ -89,7 +92,7 @@ Sample Output:
 null // Return null if this word is not in model.
 ```
 
-### w2v.getVectors(words=["word1", "word2"], options = {})
+### w2v.getVectors(words=["word1", "word2"], ?options = {})
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | words          | Array of strings to be searched.       |     "word"    |
@@ -136,7 +139,7 @@ Sample Output:
   // this will trigger a error log in console:
   //'李洵' is not found in the model.
 ```
-### w2v.getSimilarWords(word = "word", options = {})
+### w2v.getSimilarWords(word = "word", ?options = {})
 Return 40ish words that is similar to "word".
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
@@ -185,11 +188,10 @@ Sample Output:
 {}
 ```
 
-### w2v.getSimilarAsync(word = "word", returnType = "array", callback)
+### w2v.getSimilarAsync(word = "word", options, callback)
 ...........................Discarded.................................
 
-### getNeighbors(vector, options = {})
-function
+### getNeighbors(vector, ?options = {})
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | vector        | Vector to be searched.                  |     "word"    |
