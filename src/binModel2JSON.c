@@ -95,10 +95,11 @@ int main(int argc, char **argv) {
     }
     vocab[b * max_w + a] = 0;
     for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
-    len = 0;
+
+    len = 0; // normalizing
     for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
     len = sqrt(len);
-    for (a = 0; a < size; a++) M[a + b * size] /= len;
+    for (a = 0; a < size; a++) M[a + b * size] /= len; // normalizing
 
     // printf("%c", vocab[b * max_w]);
   }

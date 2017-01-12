@@ -282,8 +282,7 @@ console.log(b);
 Sample Output:
 ``` javascript
 0.974368825898
-
-'李洵' is not found in the model. // error alert in console
+// '李洵' is not found in the model. // error alert in console
 false
 ```
 ### w2v.substract(word1 = "word1", word2 = "word2")
