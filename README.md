@@ -22,10 +22,8 @@ var w2v = require( 'word2vector' );
 [load](#w2vload-modelfile-)
 [getVector](#w2vgetvectorwordword)
 [getVectors](#w2vgetvectorswordsword1-word2-returntype--array)
-[getSimilar](#w2vgetsimilarword--word-returntype--array)
-[getSimilarSync](#w2vgetsimilarsyncword--word-returntype--array)
+[getSimilarWords](#w2vgetsimilarword--word-returntype--array)
 [getNearest](#w2vgetnearestvector-returntype--array)
-[getNearestSync](#w2vgetnearestsyncvector-returntype--array)
 
 -----------
 ### w2v.train( trainFile, modelFile, options, callback )
@@ -58,7 +56,7 @@ Example:
 var w2v = require("../lib");
 var modelFile = "./test.model.bin";
 w2v.load( modelFile );
-// console.log(w2v.getSimilar());
+// console.log(w2v.getSimilarWords());
 ```
 
 ### w2v.getVector(word="word")
@@ -138,8 +136,7 @@ Sample Output:
   // this will trigger a error log in console:
   //'李洵' is not found in the model.
 ```
-### w2v.getSimilar(word = "word", returnType = "array")
-### w2v.getSimilarSync(word = "word", returnType = "array")
+### w2v.getSimilarWords(word = "word", returnType = "array")
 Return 40ish words that is similar to "word".
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
@@ -150,10 +147,10 @@ Example:
 var w2v = require("./lib");
 var modelFile = "./data/test.model.bin";
 w2v.load( modelFile );
-console.log(w2v.getSimilar("唐三藏"));
-console.log(w2v.getSimilar("李洵"));
+console.log(w2v.getSimilarWords("唐三藏"));
+console.log(w2v.getSimilarWords("李洵"));
 console.log(w2v.getSimilar("唐三藏", "object"));
-console.log(w2v.getSimilar("李洵", "object"));
+console.log(w2v.getSimilarWords("李洵", "object"));
 ```
 Sample Output:
 ``` javascript
@@ -200,7 +197,7 @@ var w2v = require("../lib");
 var modelFile = "./test.model.bin";
 w2v.load( modelFile );
 var a = w2v.getNearest(w2v.getVector("唐三藏"));
-// this is equal to use w2v.getSimilar("唐三藏");
+// this is equal to use w2v.getSimilarWords("唐三藏");
 console.log(a);
 ```
 Sample Output1:

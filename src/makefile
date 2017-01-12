@@ -2,7 +2,7 @@ CC = gcc
 #Using -Ofast instead of -O3 might result in faster code, but is supported only by newer GCC versions
 CFLAGS = -lm -pthread -O3 -march=native -Wall -funroll-loops -Wno-unused-result -fno-stack-protector
 
-all: word2vec word2phrase distance word-analogy compute-accuracy getSimilar getVectors getNearest binModel2JSON
+all: word2vec word2phrase distance word-analogy compute-accuracy getSimilarWords getVectors getNeighbors binModel2JSON
 
 word2vec : word2vec.c
 	$(CC) word2vec.c -o word2vec $(CFLAGS)
@@ -16,20 +16,20 @@ compute-accuracy : compute-accuracy.c
 	$(CC) compute-accuracy.c -o compute-accuracy $(CFLAGS)
 	chmod +x *.sh
 
-### getSimilar by leexun
-getSimilar : getSimilar.c
-	$(CC) getSimilar.c -o getSimilar $(CFLAGS)
-### getSimilar by leexun
+### getSimilarWords by leexun
+getSimilarWords : getSimilarWords.c
+	$(CC) getSimilarWords.c -o getSimilarWords $(CFLAGS)
+### getSimilarWords by leexun
 
 ### getVectors by leexun
 getVectors : getVectors.c
 	$(CC) getVectors.c -o getVectors $(CFLAGS)
 ### getVectors by leexun
 
-### getNearest by leexun
-getNearest : getNearest.c
-	$(CC) getNearest.c -o getNearest $(CFLAGS)
-### getNearest by leexun
+### getNeighbors by leexun
+getNeighbors : getNeighbors.c
+	$(CC) getNeighbors.c -o getNeighbors $(CFLAGS)
+### getNeighbors by leexun
 
 ### binModel2JSON by leexun
 binModel2JSON : binModel2JSON.c
@@ -37,4 +37,4 @@ binModel2JSON : binModel2JSON.c
 ### binModel2JSON by leexun
 
 clean:
-	rm -rf word2vec word2phrase distance word-analogy compute-accuracy getSimilar getVectors getNearest binModel2JSON
+	rm -rf word2vec word2phrase distance word-analogy compute-accuracy getSimilarWords getVectors getNeighbors binModel2JSON
