@@ -21,9 +21,12 @@ var w2v = require( 'word2vector' );
 [train](#w2vtrain-trainfile-modelfile-options-callback-)
 [load](#w2vload-modelfile-)
 [getVector](#w2vgetvectorwordword)
-[getVectors](#w2vgetvectorswordsword1-word2-returntype--array)
-[getSimilarWords](#w2vgetsimilarword--word-returntype--array)
-[getNeighbors](#w2vgetnearestvector-returntype--array)
+[getVectors](#w2vgetvectorswordsword1-word2-options--)
+[getSimilarWords](#w2vgetsimilarwordsword--word-options--)
+[getNeighbors](#getneighborsvector-options--)
+[similarity](#w2vsimilarityword1--word1-word2--word2)
+[substract](#w2vsubstractword1--word1-word2--word2)
+[add](#w2vaddword1--word1-word2--word2)
 
 -----------
 ### w2v.train( trainFile, modelFile, options, callback )
