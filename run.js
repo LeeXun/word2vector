@@ -1,7 +1,9 @@
-'use strict';
-var w2v = require("./lib");
-var modelFile = "./data/test.model.bin";
-w2v.load( modelFile );
-var a = w2v.add("孫悟空", [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]);
-console.log(w2v.getVector("孫悟空"));
-console.log(a);
+var w2v = require("./index.js");
+
+w2v.load( "./test/testdata/test.model", "utf-8");
+console.log(w2v.getVectors(["孫悟空", "李洵"]));
+console.log(w2v.getVectors(["孫悟空", "李洵"], {returnType: "Object"}));
+
+w2v.load( "./test/testdata/test.model.bin" );
+console.log(w2v.getVectors(["孫悟空", "李洵"]));
+console.log(w2v.getVectors(["孫悟空", "李洵"], {returnType: "Object"}));

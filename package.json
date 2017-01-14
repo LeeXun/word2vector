@@ -4,7 +4,7 @@
   "description": "a word2vector interface for nodejs",
   "main": "lib/index.js",
   "scripts": {
-    "test": "node test/test.js"
+    "test": "mocha --timeout 10s -R spec test/loadModel_test.js && mocha --timeout 10s -R spec test/getVector_test.js && mocha --timeout 10s -R spec test/getVectors_test.js"
   },
   "repository": {
     "type": "git",
