@@ -263,7 +263,8 @@ Sample Output2:
 ### w2v.similarity(vector1 = [], word2 = "word2")
 ### w2v.similarity(word1 = "word1", vector2 = [])
 ### w2v.similarity(vector1 = [], vector2 = [])
-Return 40ish words that is similar to "word".
+<pre>Compute the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between the two vector.
+Will auto search the vector of passed word in model. Return false if it's not found.</pre>
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | word1          | First Strings to be compared.       |     No default value    |
@@ -291,7 +292,11 @@ Sample Output:
 false
 ```
 ### w2v.substract(word1 = "word1", word2 = "word2")
-Return 40ish words that is similar to "word".
+### w2v.substract(vector1 = [], word2 = "word2")
+### w2v.substract(word1 = "word1", vector2 = [])
+### w2v.substract(vector1 = [], vector2 = [])
+<pre>Substract vector1 from vector2.
+Will auto search the vector of passed word in model. Return false if it's not found.</pre>
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | word1          | Subtrahend       |     No default value    |
@@ -310,7 +315,11 @@ Sample Output:
 [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
 ```
 ### w2v.add(word1 = "word1", word2 = "word2")
-Return 40ish words that is similar to "word".
+### w2v.add(vector1 = [], word2 = "word2")
+### w2v.add(word1 = "word1", vector2 = [])
+### w2v.add(vector1 = [], vector2 = [])
+<pre>Add vector1 to vector2.
+Will auto search the vector of passed word in model. Return false if it's not found.</pre>
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | word1          | Summand       |     No default value    |

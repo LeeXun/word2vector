@@ -1,8 +1,7 @@
-var train = require("../lib/train");
-var w2v = require("./lib");
-var trainFile = "../data/train.data",
+var w2v = require("../lib");
+var trainFile = "./data/train.data",
     modelFile = "./data/test.model.bin";
-train(trainFile, modelFile, {
+w2v.train(trainFile, modelFile, {
   	cbow: 1,
   	size: 10,
   	window: 8,
