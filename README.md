@@ -1,7 +1,7 @@
 # word2vector NodeJS Interface
 =============
 This is a Node.js interface for Google's [word2vector](https://code.google.com/archive/p/word2vec/).<br>
-Here is a example of how to load large model like [GoogleNews-vectors-negative300.bin](https://github.com/LeeXun/word2vector-Google3G) by this package.<br>
+Here is an [example](https://github.com/LeeXun/word2vector-Google3G) of how to load large model like [GoogleNews-vectors-negative300.bin](https://github.com/LeeXun/word2vector-Google3G) by this package.<br>
 # Supports both binary model and raw text model.
 # Warning: Windows is not supported.
 
