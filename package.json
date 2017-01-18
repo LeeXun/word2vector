@@ -26,10 +26,12 @@
   "author": "leexun",
   "license": "Apache-2.0",
   "dependencies": {
-    "lodash": "^4.17.4",
     "change-case": "^2.1.5",
-    "mime": "^1.2.11"
+    "lodash": "^4.17.4",
+    "mime": "^1.2.11",
+    "nan": "^2.5.0"
   },
+  "gypfile": true,
   "devDependencies": {
     "should": "^11.1.2"
   }

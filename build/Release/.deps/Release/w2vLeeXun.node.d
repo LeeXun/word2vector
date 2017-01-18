@@ -1,0 +1,1 @@
+cmd_Release/w2vLeeXun.node := c++ -bundle -undefined dynamic_lookup -Wl,-no_pie -Wl,-search_paths_first -mmacosx-version-min=10.7 -arch x86_64 -L./Release -stdlib=libc++  -o Release/w2vLeeXun.node Release/obj.target/w2vLeeXun/src/w2vLeeXun.o 
