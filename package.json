@@ -28,7 +28,6 @@
   "dependencies": {
     "change-case": "^2.1.5",
     "lodash": "^4.17.4",
-    "mime": "^1.2.11",
     "nan": "^2.5.0"
   },
   "gypfile": true,

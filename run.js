@@ -1,18 +1,19 @@
 var w2v = require("./index.js");
 var _ = require( "lodash" );
-// w2v.load( "./test/testdata/test.model", "utf-8");
 // console.log(w2v.getVectors(["孫悟空", "李洵"]));
 // console.log(w2v.getVectors(["孫悟空", "李洵"], {returnType: "Object"}));
 //
-w2v.load( "./GoogleNews-vectors-negative300.bin");
+// w2v.load("./test/testdata/test.model.bin");
+w2v.load("./test/testdata/test.model", "utf-8");
+// w2v.load( "./GoogleNews-vectors-negative300.bin");
 // console.log(_.isArray(w2v.getVectors(["孫悟空", "李洵"], {returnType: "Object"})["孫悟空"]));
 // console.log(w2v.getVector("孫悟空"));
 // console.log(w2v.getVector("李洵"));
 // console.log(w2v.model["臺灣"]);
 // console.log(_.isArray(w2v.getVector("臺灣")))
-// console.log(w2v.getVectors(["孫悟空", "李洵"]));
-// console.log(w2v.getVectors(["孫悟空", "李洵"], {returnType: "Object"}));
-// console.log(w2v.similarity(w2v.getVector("臺灣"), "臺灣"));
+console.log(w2v.getVectors(["孫悟空", "李洵"]));
+console.log(w2v.getVectors(["孫悟空", "李洵"], {returnType: "Object"}));
+console.log(w2v.similarity(w2v.getVector("臺灣"), "臺灣"));
 // console.log(w2v.getVector("李洵"));
 // console.log(w2v.getVectors(["孫悟空", "李洵"], {returnType: "Object"})['孫悟空'].length);
 // console.log(w2v.getVectors(["孫悟空", "李洵"]));

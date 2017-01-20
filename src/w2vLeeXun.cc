@@ -2,11 +2,14 @@
 #include <node.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
+#include <fstream>
 #include <string.h>
 #include <string>
 #include <math.h>
 #include <time.h>
 
+size_t debug = 0;
 const long long max_size = 10000;         // max length of strings
 const long long N = 40;                  // number of closest words that will be shown
 const long long max_w = 50;              // max length of vocabulary entries
@@ -21,6 +24,7 @@ using v8::Value;
 
 FILE *f;
 char st1[max_size];
+char line[max_size+max_size];
 char *bestw[N];
 char file_name[max_size], st[100][max_size];
 float dist, len, bestd[N], vec[max_size];
@@ -31,12 +35,13 @@ bool isModelSet = false;
 time_t start;
 struct tm tm;
 double tick = -1;
+char *tokens[max_size];
 
-int split(char **arr, char *str, const char *del) {
+int split(char **tokens, char *str, const char *del) {
    char *s = strtok(str, del);
    int count = 0;
    while(s != NULL) {
-     *arr++ = s;
+     *tokens++ = s;
      s = strtok(NULL, del);
      count ++;
    }
@@ -49,7 +54,7 @@ bool ConsoleTime(const char *event)
     if(tick != (tmp - start))
     {
       printf("%s", event);
-      printf("%.f", difftime(tmp, start));
+      printf("%.f seconds", difftime(tmp, start));
       tick = (tmp - start);
       return true;
     }
@@ -63,17 +68,20 @@ void LoadModel(const FunctionCallbackInfo<Value>& args) {
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, "LoadModel has no params.\n"));
     return;
   }
-  String::Utf8Value paraValue(args[0]->ToString()); //先把 args v8:Value 轉成 v8:String 再給 Utf8Value
-  std::string paraString (*paraValue); // 然後把 Utf8Value 的 pointer 給 c++ string
-  printf("Reading %s ....\n", paraString.c_str());
+  char filename[max_size], fileType[max_size];
+  strcpy(filename, *String::Utf8Value(args[0]->ToString()));
+  strcpy(fileType, *String::Utf8Value(args[1]->ToString()));
+  printf("Reading: %s ....\n\n", filename);
   start = time(NULL);
-  f = fopen(paraString.c_str(), "rb");
+  f = fopen(filename, "rb");
   if (f == NULL) {
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Input file not found\n"));
     return;
   }
-  fscanf(f, "%lld", &words);
-  fscanf(f, "%lld", &size);
+  fgets(line, max_size+max_size, f);
+  split(tokens, line, " ");
+  words = atof(tokens[0]);
+  size = atof(tokens[1]);
   vocab = (char *)malloc((long long)words * max_w * sizeof(char));
   for (a = 0; a < N; a++) bestw[a] = (char *)malloc(max_size * sizeof(char));
   M = (float *)malloc((long long)words * (long long)size * sizeof(float));
@@ -82,29 +90,55 @@ void LoadModel(const FunctionCallbackInfo<Value>& args) {
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Cannot allocate memory.\n"));
     return;
   }
-  for (b = 0; b < words; b++) {
-    a = 0;
-    while (1) {
-      vocab[b * max_w + a] = fgetc(f);
-      if (feof(f) || (vocab[b * max_w + a] == ' ')) break;
-      if ((a < max_w) && (vocab[b * max_w + a] != '\n')) a++;
-    }
-    vocab[b * max_w + a] = 0;
-    for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
 
-    len = 0; // normalizing
-    for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
-    // if(ConsoleTime("")) printf(",%lld,%lld\n", b, size);
-    len = sqrt(len);
-    for (a = 0; a < size; a++) M[a + b * size] /= len; // normalizing
+  if(strcmp(fileType, "utf-8") == 0)
+  {
+    for (b = 0; b < words; b++) {
+      fgets(line, max_size+max_size, f);
+      split(tokens, line, " ");
+      a = 0;
+      while(tokens[0][a])
+      {
+        vocab[b * max_w + a] = tokens[0][a];
+        // if(debug) printf("%c", vocab[b * max_w + a]);
+        a ++;
+      }
+      vocab[b * max_w + a] = 0;
+      // if(debug && ConsoleTime("")) printf(",%lld,%lld\n", b, size);
+      for (a = 1; a < size+1; a++)
+      {
+        M[a + b * size] = atof(tokens[a]);
+        // if(debug) printf(" %f", M[a + b * size]);
+      }
+      len = 0; // start of normalizing
+      for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
+      len = sqrt(len);
+      for (a = 0; a < size; a++) M[a + b * size] /= len; // end of normalizing
+      // if(debug) printf("\n");
+    }
+  }
+  else
+  {
+    for (b = 0; b < words; b++) {
+      a = 0;
+      while (1) {
+        vocab[b * max_w + a] = fgetc(f);
+        // printf("%c ", vocab[b * max_w + a]);
+        if (feof(f) || (vocab[b * max_w + a] == ' ')) break;
+        if ((a < max_w) && (vocab[b * max_w + a] != '\n')) a++;
+      }
+      vocab[b * max_w + a] = 0;
+      for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
+      len = 0;
+      for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
+      // if(ConsoleTime("")) printf(",%lld,%lld\n", b, size);
+      len = sqrt(len);
+      for (a = 0; a < size; a++) M[a + b * size] /= len; // normalizing
+    }
   }
   isModelSet = true;
-  std::string result = "";
-  result += paraString.c_str();
-  result += " \n";
-  // ConsoleTime("Loaded");
-  printf("%s Loaded.\n", paraString.c_str());
-  args.GetReturnValue().Set(String::NewFromUtf8(isolate, result.c_str()));
+  printf("Loaded: %s\n", filename);
+  args.GetReturnValue().Set(String::NewFromUtf8(isolate, "true"));
 }
 
 void GetVectors(const FunctionCallbackInfo<Value>& args) {
@@ -119,19 +153,16 @@ void GetVectors(const FunctionCallbackInfo<Value>& args) {
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Model is not set.\n"));
     return;
   }
-  String::Utf8Value paraValue(args[0]->ToString()); //先把 args v8:Value 轉成 v8:String 再給 Utf8Value
-  std::string paraString (*paraValue); // 然後把 Utf8Value 的 pointer 給 c++ string
+  char paraWords[max_size];
+  strcpy(paraWords, *String::Utf8Value(args[0]->ToString()));
   std::string result = "";
-  char paraCString[max_size];
-  strcpy(paraCString, paraString.c_str());
   int wordC = 0;
-  char *arr[max_size];
-  int wordsSize = split(arr, paraCString, ",");
-  while(true){
-    // result += std::to_string(strlen(arr[wordC])); // append word front;
-    result += arr[wordC];
+  char *tokens[max_size];
+  int wordsSize = split(tokens, paraWords, ",");
+  while(wordC < wordsSize){
+    result += tokens[wordC];
     result += ',';
-    strcpy(st1, arr[wordC]);
+    strcpy(st1, tokens[wordC]);
     if(strlen(st1) > max_size-1)
     {
       args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Word size is too large.\n"));
@@ -180,15 +211,8 @@ void GetVectors(const FunctionCallbackInfo<Value>& args) {
         }
       }
     }
+    result += "\n";
     wordC ++; // next word
-    if(wordC < wordsSize)
-    {
-      result += "\n";
-    }
-    else
-    {
-      break;
-    }
   }
   args.GetReturnValue().Set(String::NewFromUtf8(isolate, result.c_str()));
 }
@@ -198,23 +222,23 @@ void GetSimilarWords(const FunctionCallbackInfo<Value>& args)
   Isolate* isolate = args.GetIsolate();
   if(args.Length() < 1)
   {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "GetSimilarWords has no params.\n"));
+    printf("GetSimilarWords has no params.\n");
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
     return;
   }
   if(!isModelSet)
   {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Model is not set.\n"));
+    printf("Model is not set.\n");
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
     return;
   }
-  String::Utf8Value paraValue(args[0]->ToString()); //先把 args v8:Value 轉成 v8:String 再給 Utf8Value
-  std::string paraString (*paraValue); // 然後把 Utf8Value 的 pointer 給 c++ string
-  std::string result = "";
+  strcpy(st1, *String::Utf8Value(args[0]->ToString()));
   for (a = 0; a < N; a++) bestd[a] = 0;
   for (a = 0; a < N; a++) bestw[a][0] = 0;
-  strcpy(st1, paraString.c_str());
   if(strlen(st1) > max_size-1)
   {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Word byte is too large.\n"));
+    printf("Word byte is too large.\n");
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
     return;
   }
   cn = 0;
@@ -239,9 +263,8 @@ void GetSimilarWords(const FunctionCallbackInfo<Value>& args)
     bi[a] = b;
     // printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
     if (b == -1) {
-      result += st[a];
-      result += ",Out of dictionary word.\n";
-      args.GetReturnValue().Set(String::NewFromUtf8(isolate, result.c_str()));
+      printf("%s Out of dictionary word.", st[a]);
+      args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
       return;
     }
   }
@@ -274,7 +297,7 @@ void GetSimilarWords(const FunctionCallbackInfo<Value>& args)
       }
     }
   }
-  result = "";
+  std::string result = "";
   for (a = 0; a < N; a++)
   {
     // printf("%s,%f\n", bestw[a], bestd[a]);
@@ -293,26 +316,25 @@ void GetNeighbors(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
   if(args.Length() < 1)
   {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "GetNeighbors has no params.\n"));
+    printf("GetNeighbors has no params.\n");
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
     return;
   }
   if(!isModelSet)
   {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Model is not set.\n"));
+    printf("Model is not set.\n");
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
     return;
   }
-  String::Utf8Value paraValue(args[0]->ToString()); //先把 args v8:Value 轉成 v8:String 再給 Utf8Value
-  std::string paraString (*paraValue); // 然後把 Utf8Value 的 pointer 給 c++ string
-  std::string result = "";
-  char paraCString[max_size];
-  strcpy(paraCString, paraString.c_str());
+  char paraWords[max_size];
+  strcpy(paraWords, *String::Utf8Value(args[0]->ToString()));
   for (a = 0; a < N; a++) bestd[a] = 0;
   for (a = 0; a < N; a++) bestw[a][0] = 0;
-  char *arr[max_size];
-  split(arr, paraCString, ",");
+  char *tokens[max_size];
+  split(tokens, paraWords, ",");
   for (a = 0; a < size; a++)
   {
-    vec[a] = atof(arr[a]);
+    vec[a] = atof(tokens[a]);
   }
   cn = 1;
   b = 0;
@@ -341,17 +363,14 @@ void GetNeighbors(const FunctionCallbackInfo<Value>& args) {
       }
     }
   }
-  for (a = 0; a < N;)
+  std::string result = "";
+  for (a = 0; a < N; a++)
   {
     // printf("%s,%f\n", bestw[a], bestd[a]);
     result += bestw[a];
     result += ',';
     result += std::to_string(bestd[a]);
-    a++;
-    if(a < N)
-    {
-      result += '\n';
-    }
+    result += '\n';
   }
   args.GetReturnValue().Set(String::NewFromUtf8(isolate, result.c_str()));
   return;
