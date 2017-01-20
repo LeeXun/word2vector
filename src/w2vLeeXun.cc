@@ -1,11 +1,11 @@
 // hello.cc
 #include <node.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <string>
 #include <math.h>
-#include <stdlib.h>
-#include <assert.h>
+#include <time.h>
 
 const long long max_size = 10000;         // max length of strings
 const long long N = 40;                  // number of closest words that will be shown
@@ -28,25 +28,9 @@ long long words, size, a, b, c, d, cn, bi[100];
 float *M;
 char *vocab;
 bool isModelSet = false;
-
-int str_split_count(char* a_str, const char a_delim)
-{
-    int count        = 0;
-    char* tmp        = a_str;
-    char* last_comma = 0;
-    while (*tmp)
-    {
-        if (a_delim == *tmp)
-        {
-            count++;
-            last_comma = tmp;
-        }
-        tmp++;
-    }
-    count += last_comma < (a_str + strlen(a_str) - 1);
-    count++;
-    return count;
-}
+time_t start;
+struct tm tm;
+double tick = -1;
 
 int split(char **arr, char *str, const char *del) {
    char *s = strtok(str, del);
@@ -59,6 +43,19 @@ int split(char **arr, char *str, const char *del) {
    return count;
 }
 
+bool ConsoleTime(const char *event)
+{
+    time_t tmp = time(NULL);
+    if(tick != (tmp - start))
+    {
+      printf("%s", event);
+      printf("%.f", difftime(tmp, start));
+      tick = (tmp - start);
+      return true;
+    }
+    return false;
+}
+
 void LoadModel(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
   if(args.Length() < 1)
@@ -69,6 +66,7 @@ void LoadModel(const FunctionCallbackInfo<Value>& args) {
   String::Utf8Value paraValue(args[0]->ToString()); //先把 args v8:Value 轉成 v8:String 再給 Utf8Value
   std::string paraString (*paraValue); // 然後把 Utf8Value 的 pointer 給 c++ string
   printf("Reading %s ....\n", paraString.c_str());
+  start = time(NULL);
   f = fopen(paraString.c_str(), "rb");
   if (f == NULL) {
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Input file not found\n"));
@@ -94,15 +92,17 @@ void LoadModel(const FunctionCallbackInfo<Value>& args) {
     vocab[b * max_w + a] = 0;
     for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
 
-    len = 0; // normalizing
-    for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
-    len = sqrt(len);
-    for (a = 0; a < size; a++) M[a + b * size] /= len; // normalizing
+    // len = 0; // normalizing
+    // for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
+    if(ConsoleTime("")) printf(",%lld,%lld\n", b, size);
+    // len = sqrt(len);
+    // for (a = 0; a < size; a++) M[a + b * size] /= len; // normalizing
   }
   isModelSet = true;
   std::string result = "";
   result += paraString.c_str();
   result += " \n";
+  ConsoleTime("Loaded");
   printf("%s Loaded.\n", paraString.c_str());
   args.GetReturnValue().Set(String::NewFromUtf8(isolate, result.c_str()));
 }

@@ -1,6 +1,6 @@
 # Git
 .git*
-
+GoogleNews-vectors-negative300.bin
 # .DS_Store #
 .DS_Store
 
@@ -23,6 +23,7 @@ node_modules/
 # Logs #
 ########
 *.log
+reports/
 
 # Run #
 ########
