@@ -1,6 +1,8 @@
 # Git
 .git*
 GoogleNews-vectors-negative300.bin
+GoogleNews-vectors-negative300.bin.txt
+file.txt
 # .DS_Store #
 .DS_Store
 

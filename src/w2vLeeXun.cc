@@ -141,6 +141,65 @@ void LoadModel(const FunctionCallbackInfo<Value>& args) {
   args.GetReturnValue().Set(String::NewFromUtf8(isolate, "true"));
 }
 
+void BinModel2TXT(const FunctionCallbackInfo<Value>& args) {
+  Isolate* isolate = args.GetIsolate();
+  if(args.Length() < 1)
+  {
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "LoadModel has no params.\n"));
+    return;
+  }
+  char filename[max_size];
+  strcpy(filename, *String::Utf8Value(args[0]->ToString()));
+  printf("Reading: %s ....\n\n", filename);
+  start = time(NULL);
+  f = fopen(filename, "rb");
+  if (f == NULL) {
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Input file not found\n"));
+    return;
+  }
+  FILE *fp = fopen("file.txt", "w");
+  if (fp == NULL)
+  {
+      printf("Error opening file!\n");
+      exit(1);
+  }
+  fgets(line, max_size+max_size, f);
+  split(tokens, line, " ");
+  words = atof(tokens[0]);
+  size = atof(tokens[1]);
+  fprintf(fp, "%lld ", words);
+  fprintf(fp, "%lld\n", size);
+  vocab = (char *)malloc((long long)words * max_w * sizeof(char));
+  for (a = 0; a < N; a++) bestw[a] = (char *)malloc(max_size * sizeof(char));
+  M = (float *)malloc((long long)words * (long long)size * sizeof(float));
+  if (M == NULL) {
+    printf("Cannot allocate memory: %lld MB    %lld  %lld\n", (long long)words * size * sizeof(float) / 1048576, words, size);
+    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Cannot allocate memory.\n"));
+    return;
+  }
+  for (b = 0; b < words; b++) {
+    a = 0;
+    while (1) {
+      vocab[b * max_w + a] = fgetc(f);
+      // printf("%c ", vocab[b * max_w + a]);
+      fprintf(fp, "%c", vocab[b * max_w + a]);
+      if (feof(f) || (vocab[b * max_w + a] == ' ')) break;
+      if ((a < max_w) && (vocab[b * max_w + a] != '\n')) a++;
+    }
+    vocab[b * max_w + a] = 0;
+    for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
+    len = 0;
+    for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
+    // if(ConsoleTime("")) printf(",%lld,%lld\n", b, size);
+    len = sqrt(len);
+    for (a = 0; a < size; a++) M[a + b * size] /= len; // normalizing
+    for (a = 0; a < size; a++) fprintf(fp, "%f ", M[a + b * size]);
+  }
+  fclose(fp);
+  printf("Loaded: %s\n", filename);
+  args.GetReturnValue().Set(String::NewFromUtf8(isolate, "true"));
+}
+
 void GetVectors(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
   if(args.Length() < 1)
@@ -381,6 +440,7 @@ void init(Local<Object> exports) {
   NODE_SET_METHOD(exports, "GetVectors", GetVectors);
   NODE_SET_METHOD(exports, "GetSimilarWords", GetSimilarWords);
   NODE_SET_METHOD(exports, "GetNeighbors", GetNeighbors);
+  NODE_SET_METHOD(exports, "BinModel2TXT", BinModel2TXT);
 }
 
 NODE_MODULE(w2vLeeXun, init)
