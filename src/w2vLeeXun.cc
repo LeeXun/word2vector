@@ -92,17 +92,17 @@ void LoadModel(const FunctionCallbackInfo<Value>& args) {
     vocab[b * max_w + a] = 0;
     for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
 
-    // len = 0; // normalizing
-    // for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
-    if(ConsoleTime("")) printf(",%lld,%lld\n", b, size);
-    // len = sqrt(len);
-    // for (a = 0; a < size; a++) M[a + b * size] /= len; // normalizing
+    len = 0; // normalizing
+    for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
+    // if(ConsoleTime("")) printf(",%lld,%lld\n", b, size);
+    len = sqrt(len);
+    for (a = 0; a < size; a++) M[a + b * size] /= len; // normalizing
   }
   isModelSet = true;
   std::string result = "";
   result += paraString.c_str();
   result += " \n";
-  ConsoleTime("Loaded");
+  // ConsoleTime("Loaded");
   printf("%s Loaded.\n", paraString.c_str());
   args.GetReturnValue().Set(String::NewFromUtf8(isolate, result.c_str()));
 }
