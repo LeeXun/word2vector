@@ -1,6 +1,6 @@
 {
   "name": "word2vector",
-  "version": "1.5.2",
+  "version": "2.0.0",
   "description": "a word2vector interface for nodejs",
   "main": "lib/index.js",
   "scripts": {
