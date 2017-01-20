@@ -52,8 +52,7 @@ w2v.train(trainFile, modelFile, {
 ```
 
 ### w2v.load( modelFile,?readType = "")
-Should load model before call any calcuation functions.
-Will auto detect mime_type ,but unbinary reading is still constructing.
+#####Should load model before call any calcuation functions.
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | readType        | Model format, pass "utf-8" if using a raw text model.  |     "bin"    |
@@ -143,7 +142,7 @@ Sample Output:
   //'李洵' is not found in the model.
 ```
 ### w2v.getSimilarWords(word = "word", ?options = {})
-Return 40ish words that is similar to "word".
+#####Return 40ish words that is similar to "word".
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | word          | Strings to be searched.                 |     "word"    |
