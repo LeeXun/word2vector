@@ -4,17 +4,18 @@ var w2v = require("../index.js")
 // console.log(w2v.getVectors(["孫悟空", "李洵"], {returnType: "Object"}));
 //
 
-
-console.log(w2v)
-
+// w2v.train('./test/testdata/train.data',
+// './test/testdata/out.data',
+// { binary: 1 }
+// )
 console.log(w2v.load("./test/testdata/test.model.bin"))
 // w2v.test({"asd": "asd"})
 console.time("done")
 console.log(w2v.getVector("孫悟空"))
-// console.log(w2v.getVectors(["孫悟空", "李洵"]))
+console.log(w2v.getVectors(["臺灣", "李洵"]))
 
-// console.log(w2v.getSimilarWords("孫悟空"))
-// console.log(w2v.getNeighbors(w2v.getVectors(["孫悟空"])[0]["vector"]))
+console.log(w2v.getSimilarWords("孫悟空"))
+console.log(w2v.getNeighbors(w2v.getVectors(["孫悟空"])[0]["vector"]))
 // w2v.load("./file.txt", "utf-8");
 // w2v.bin2txt("./GoogleNews-vectors-negative300.bin");
 console.timeEnd("done")

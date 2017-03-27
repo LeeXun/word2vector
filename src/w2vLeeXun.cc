@@ -131,7 +131,7 @@ void load(const FunctionCallbackInfo<Value>& info) {
     }
   }
   isModelSet = true;
-  printf("Loaded: %s\n", filename);
+  // printf("Loaded: %s\n", filename);
   info.GetReturnValue().Set(New<Boolean>(true));
 }
 
@@ -143,7 +143,7 @@ void bin2txt(const FunctionCallbackInfo<Value>& info) {
   }
   char filename[max_size];
   strcpy(filename, *Utf8String(info[0]));
-  printf("Reading: %s ....\n\n", filename);
+  // printf("Reading: %s ....\n\n", filename);
   start = time(NULL);
   f = fopen(filename, "rb");
   if (f == NULL) {
@@ -196,6 +196,7 @@ void bin2txt(const FunctionCallbackInfo<Value>& info) {
 
 void getVectors(const FunctionCallbackInfo<Value>& info) {
   if(info.Length() < 1) {
+    printf("getVectors requires first parameter.\n");
     info.GetReturnValue().Set(New<Boolean>(false));
     exit(1);
   }
@@ -205,7 +206,7 @@ void getVectors(const FunctionCallbackInfo<Value>& info) {
     exit(1);
   }
   Local<Array> word_obj_array = Local<Array>::Cast(info[0]);
-    uint32_t w = 0;
+  uint32_t w = 0;
   while(w < word_obj_array->Length()){
     Handle<Object> word_obj = New<Object>();
     word_obj->Set(
@@ -237,7 +238,7 @@ void getVectors(const FunctionCallbackInfo<Value>& info) {
       // printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
       if (b == -1) {
         // result += "Out of dictionary word";
-        word_obj->Set(New<String>("vector").ToLocalChecked(), New<Array>(0));
+        word_obj->Set(New<String>("vector").ToLocalChecked(), Nan::Null());
       }
     }
     if(b != -1) {
@@ -294,7 +295,7 @@ void getSimilarWords(const FunctionCallbackInfo<Value>& info)
     // printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
     if (b == -1) {
       printf("%s Out of dictionary word.", st[a]);
-      info.GetReturnValue().Set(New<Array>(0));
+      info.GetReturnValue().Set(Nan::Null());
       exit(1);
     }
   }
