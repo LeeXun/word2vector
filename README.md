@@ -52,11 +52,12 @@ w2v.train(trainFile, modelFile, {
 ```
 
 ### w2v.load( modelFile,?readType = "")
-#####Should load model before call any calcuation functions.
+<pre>Should load model before calling any calcuation functions.</pre>
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | readType        | Model format, pass "utf-8" if using a raw text model.  |     "bin"    |
-Example:
+| ------------- |:-------------:| -----:|
+
 ``` javascript
 var w2v = require("../lib");
 var modelFile = "./test.model.bin";
@@ -68,7 +69,8 @@ w2v.load( modelFile );
 | Params        |   Description                | Default Value |
 | ------------- |:-------------:| -----:|
 | word          | String to be searched.       |     "word"    |
-Example:
+| ------------- |:-------------:| -----:|
+
 ``` javascript
 'use strict';
 var w2v = require("./lib");
@@ -98,7 +100,7 @@ null // Return null if this word is not in model.
 | Params        |   Description                           | Default Value |
 | ------------- |:-------------:| -----:|
 | words          | Array of strings to be searched.       |     "word"    |
-Example:
+| ------------- |:-------------:| -----:|
 ``` javascript
 var w2v = require("./lib");  
 var modelFile = "./data/test.model.bin";
@@ -129,7 +131,7 @@ Sample Output:
 | ------------- |:-------------:| -----:|
 | word          | Strings to be searched.                 |     "word"    |
 | options.N    | return topN results             | Array         |
-Example:
+| ------------- |:-------------:| -----:|
 ``` javascript
 var w2v = require("./lib");
 var modelFile = "./data/test.model.bin";
@@ -160,7 +162,7 @@ Sample Output:
 | ------------- |:-------------:| -----:|
 | vector        | Vector to be searched.                  |     "word"    |
 | options.N    | return topN results             | Array         |
-Example1:
+| ------------- |:-------------:| -----:|
 ``` javascript
 var w2v = require("./lib");
 var modelFile = "./data/test.model.bin";
@@ -202,7 +204,8 @@ Will auto search the vector of passed word in model. Return false if it's not fo
 | word2    | Second Strings to be compared.            |     No default value    |
 | vector1    | First Vector to be compared.            |     No default value    |
 | vector2    | Second Vector to be compared.            |     No default value    |
-Example:
+| ------------- |:-------------:| -----:|
+
 ``` javascript
 'use strict';
 var w2v = require("./lib");
