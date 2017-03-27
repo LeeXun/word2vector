@@ -1,11 +1,11 @@
 // hello.cc
 #include <node.h>
+#include <nan.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <string.h>
-#include <string>
 #include <math.h>
 #include <time.h>
 
@@ -15,12 +15,9 @@ const long long N = 40;                  // number of closest words that will be
 const long long max_w = 50;              // max length of vocabulary entries
 namespace demo {
 
-using v8::FunctionCallbackInfo;
-using v8::Isolate;
-using v8::Local;
-using v8::Object;
-using v8::String;
-using v8::Value;
+using namespace v8;
+using Nan::Utf8String;
+using Nan::New;
 
 FILE *f;
 char st1[max_size];
@@ -28,12 +25,11 @@ char line[max_size+max_size];
 char *bestw[N];
 char file_name[max_size], st[100][max_size];
 float dist, len, bestd[N], vec[max_size];
-long long words, size, a, b, c, d, cn, bi[100];
+long long w_size, v_size, a, b, c, d, cn, bi[100];
 float *M;
 char *vocab;
 bool isModelSet = false;
 time_t start;
-struct tm tm;
 double tick = -1;
 char *tokens[max_size];
 
@@ -61,40 +57,39 @@ bool ConsoleTime(const char *event)
     return false;
 }
 
-void LoadModel(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = args.GetIsolate();
-  if(args.Length() < 1)
-  {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "LoadModel has no params.\n"));
+void load(const FunctionCallbackInfo<Value>& info) {
+  if(info.Length() < 1) {
+    printf("load function has no first parameter.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
     return;
   }
   char filename[max_size], fileType[max_size];
-  strcpy(filename, *String::Utf8Value(args[0]->ToString()));
-  strcpy(fileType, *String::Utf8Value(args[1]->ToString()));
+  strcpy(filename, *Utf8String(info[0]));
+  strcpy(fileType, *Utf8String(info[1]));
   printf("Reading: %s ....\n\n", filename);
   start = time(NULL);
   f = fopen(filename, "rb");
   if (f == NULL) {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Input file not found\n"));
+    printf("Input file not found\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
     return;
   }
   fgets(line, max_size+max_size, f);
   split(tokens, line, " ");
-  words = atof(tokens[0]);
-  size = atof(tokens[1]);
-  vocab = (char *)malloc((long long)words * max_w * sizeof(char));
+  w_size = atof(tokens[0]);
+  v_size = atof(tokens[1]);
+  vocab = (char *)malloc((long long)w_size * max_w * sizeof(char));
   for (a = 0; a < N; a++) bestw[a] = (char *)malloc(max_size * sizeof(char));
-  M = (float *)malloc((long long)words * (long long)size * sizeof(float));
+  M = (float *)malloc((long long)w_size * (long long)v_size * sizeof(float));
   if (M == NULL) {
-    printf("Cannot allocate memory: %lld MB    %lld  %lld\n", (long long)words * size * sizeof(float) / 1048576, words, size);
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Cannot allocate memory.\n"));
+    printf("Cannot allocate memory: %lld MB    %lld  %lld\n", (long long)w_size * v_size * sizeof(float) / 1048576, w_size, v_size);
+    info.GetReturnValue().Set(New<Boolean>(false));
     return;
   }
 
-  if(strcmp(fileType, "utf-8") == 0)
-  {
-    for (b = 0; b < words; b++) {
-      fgets(line, max_size+max_size, f);
+  if(strcmp(fileType, "utf-8") == 0) {
+    for (b = 0; b < w_size; b++) {
+      fgets(line, max_size + max_size, f);
       split(tokens, line, " ");
       a = 0;
       while(tokens[0][a])
@@ -104,22 +99,21 @@ void LoadModel(const FunctionCallbackInfo<Value>& args) {
         a ++;
       }
       vocab[b * max_w + a] = 0;
-      // if(debug && ConsoleTime("")) printf(",%lld,%lld\n", b, size);
-      for (a = 1; a < size+1; a++)
+      // if(debug && ConsoleTime("")) printf(",%lld,%lld\n", b, v_size);
+      for (a = 1; a < v_size + 1; a++)
       {
-        M[a + b * size] = atof(tokens[a]);
-        // if(debug) printf(" %f", M[a + b * size]);
+        M[a + b * v_size] = atof(tokens[a]);
+        // if(debug) printf(" %f", M[a + b * v_size]);
       }
       len = 0; // start of normalizing
-      for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
+      for (a = 0; a < v_size; a++) len += M[a + b * v_size] * M[a + b * v_size];
       len = sqrt(len);
-      for (a = 0; a < size; a++) M[a + b * size] /= len; // end of normalizing
+      for (a = 0; a < v_size; a++) M[a + b * v_size] /= len; // end of normalizing
       // if(debug) printf("\n");
     }
   }
-  else
-  {
-    for (b = 0; b < words; b++) {
+  else {
+    for (b = 0; b < w_size; b++) {
       a = 0;
       while (1) {
         vocab[b * max_w + a] = fgetc(f);
@@ -128,56 +122,56 @@ void LoadModel(const FunctionCallbackInfo<Value>& args) {
         if ((a < max_w) && (vocab[b * max_w + a] != '\n')) a++;
       }
       vocab[b * max_w + a] = 0;
-      for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
+      for (a = 0; a < v_size; a++) fread(&M[a + b * v_size], sizeof(float), 1, f);
       len = 0;
-      for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
+      for (a = 0; a < v_size; a++) len += M[a + b * v_size] * M[a + b * v_size];
       // if(ConsoleTime("")) printf(",%lld,%lld\n", b, size);
       len = sqrt(len);
-      for (a = 0; a < size; a++) M[a + b * size] /= len; // normalizing
+      for (a = 0; a < v_size; a++) M[a + b * v_size] /= len; // normalizing
     }
   }
   isModelSet = true;
   printf("Loaded: %s\n", filename);
-  args.GetReturnValue().Set(String::NewFromUtf8(isolate, "true"));
+  info.GetReturnValue().Set(New<Boolean>(true));
 }
 
-void BinModel2TXT(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = args.GetIsolate();
-  if(args.Length() < 1)
-  {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "LoadModel has no params.\n"));
-    return;
+void bin2txt(const FunctionCallbackInfo<Value>& info) {
+  if(info.Length() < 1) {
+    printf("load function has no first parameter.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    exit(1);
   }
   char filename[max_size];
-  strcpy(filename, *String::Utf8Value(args[0]->ToString()));
+  strcpy(filename, *Utf8String(info[0]));
   printf("Reading: %s ....\n\n", filename);
   start = time(NULL);
   f = fopen(filename, "rb");
   if (f == NULL) {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Input file not found\n"));
-    return;
+    printf("Input file not found\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    exit(1);
   }
-  FILE *fp = fopen("file.txt", "w");
-  if (fp == NULL)
-  {
+  FILE *fp = fopen("model.txt", "w");
+  if (fp == NULL) {
       printf("Error opening file!\n");
+      info.GetReturnValue().Set(New<Boolean>(false));
       exit(1);
   }
-  fgets(line, max_size+max_size, f);
+  fgets(line, max_size + max_size, f);
   split(tokens, line, " ");
-  words = atof(tokens[0]);
-  size = atof(tokens[1]);
-  fprintf(fp, "%lld ", words);
-  fprintf(fp, "%lld\n", size);
-  vocab = (char *)malloc((long long)words * max_w * sizeof(char));
+  w_size = atof(tokens[0]);
+  v_size = atof(tokens[1]);
+  fprintf(fp, "%lld ", w_size);
+  fprintf(fp, "%lld\n", v_size);
+  vocab = (char *)malloc((long long)w_size * max_w * sizeof(char));
   for (a = 0; a < N; a++) bestw[a] = (char *)malloc(max_size * sizeof(char));
-  M = (float *)malloc((long long)words * (long long)size * sizeof(float));
+  M = (float *)malloc((long long)w_size * (long long)v_size * sizeof(float));
   if (M == NULL) {
-    printf("Cannot allocate memory: %lld MB    %lld  %lld\n", (long long)words * size * sizeof(float) / 1048576, words, size);
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Cannot allocate memory.\n"));
-    return;
+    printf("Cannot allocate memory: %lld MB    %lld  %lld\n", (long long)w_size * v_size * sizeof(float) / 1048576, w_size, v_size);
+    info.GetReturnValue().Set(New<Boolean>(false));
+    exit(1);
   }
-  for (b = 0; b < words; b++) {
+  for (b = 0; b < w_size; b++) {
     a = 0;
     while (1) {
       vocab[b * max_w + a] = fgetc(f);
@@ -187,46 +181,38 @@ void BinModel2TXT(const FunctionCallbackInfo<Value>& args) {
       if ((a < max_w) && (vocab[b * max_w + a] != '\n')) a++;
     }
     vocab[b * max_w + a] = 0;
-    for (a = 0; a < size; a++) fread(&M[a + b * size], sizeof(float), 1, f);
+    for (a = 0; a < v_size; a++) fread(&M[a + b * v_size], sizeof(float), 1, f);
     len = 0;
-    for (a = 0; a < size; a++) len += M[a + b * size] * M[a + b * size];
+    for (a = 0; a < v_size; a++) len += M[a + b * v_size] * M[a + b * v_size];
     // if(ConsoleTime("")) printf(",%lld,%lld\n", b, size);
     len = sqrt(len);
-    for (a = 0; a < size; a++) M[a + b * size] /= len; // normalizing
-    for (a = 0; a < size; a++) fprintf(fp, "%f ", M[a + b * size]);
+    for (a = 0; a < v_size; a++) M[a + b * v_size] /= len; // normalizing
+    for (a = 0; a < v_size; a++) fprintf(fp, "%f ", M[a + b * v_size]);
   }
   fclose(fp);
-  printf("Loaded: %s\n", filename);
-  args.GetReturnValue().Set(String::NewFromUtf8(isolate, "true"));
+  printf("model.txt done.\n");
+  info.GetReturnValue().Set(New<Boolean>(true));
 }
 
-void GetVectors(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = args.GetIsolate();
-  if(args.Length() < 1)
-  {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "GetVector has no params.\n"));
-    return;
+void getVectors(const FunctionCallbackInfo<Value>& info) {
+  if(info.Length() < 1) {
+    info.GetReturnValue().Set(New<Boolean>(false));
+    exit(1);
   }
-  if(!isModelSet)
-  {
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Model is not set.\n"));
-    return;
+  if(!isModelSet) {
+    printf("Must Load model before getVectors.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    exit(1);
   }
-  char paraWords[max_size];
-  strcpy(paraWords, *String::Utf8Value(args[0]->ToString()));
-  std::string result = "";
-  int wordC = 0;
-  char *tokens[max_size];
-  int wordsSize = split(tokens, paraWords, ",");
-  while(wordC < wordsSize){
-    result += tokens[wordC];
-    result += ',';
-    strcpy(st1, tokens[wordC]);
-    if(strlen(st1) > max_size-1)
-    {
-      args.GetReturnValue().Set(String::NewFromUtf8(isolate, "Word size is too large.\n"));
-      return;
-    }
+  Local<Array> word_obj_array = Local<Array>::Cast(info[0]);
+    uint32_t w = 0;
+  while(w < word_obj_array->Length()){
+    Handle<Object> word_obj = New<Object>();
+    word_obj->Set(
+      New<String>("word").ToLocalChecked(),
+      word_obj_array->Get(New<Number>(w))->ToString()
+    );
+    strcpy(st1, *Utf8String(word_obj_array->Get(New<Number>(w))));
     cn = 0;
     b = 0;
     c = 0;
@@ -244,62 +230,47 @@ void GetVectors(const FunctionCallbackInfo<Value>& args) {
     }
     cn++;
     for (a = 0; a < cn; a++) {
-      for (b = 0; b < words; b++) if (!strcmp(&vocab[b * max_w], st[a])) break;
-      if (b == words) b = -1;
+      for (b = 0; b < w_size; b++) if (!strcmp(&vocab[b * max_w], st[a])) break;
+      if (b == w_size) b = -1;
       bi[a] = b;
       // printf("%f\n", M[a + bi[a] * size]);
       // printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
       if (b == -1) {
-        result += "Out of dictionary word";
+        // result += "Out of dictionary word";
+        word_obj->Set(New<String>("vector").ToLocalChecked(), New<Array>(0));
       }
     }
-    if(b != -1)
-    {
-      for (a = 0; a < size; a++) vec[a] = 0;
+    if(b != -1) {
+      Local<Array> v_array = New<Array>(v_size);
+      for (a = 0; a < v_size; a++) vec[a] = 0;
       for (b = 0; b < cn; b++) {
         if (bi[b] == -1) continue;
-        for (a = 0; a < size; a++) vec[a] += M[a + bi[b] * size];
+        for (a = 0; a < v_size; a++) vec[a] += M[a + bi[b] * v_size];
       }
-      for(a = 0; a < size; a++)
-      {
-        if(a == 0) result += std::to_string(vec[a]);
-        else
-        {
-          result += ',' ;
-          result += std::to_string(vec[a]);
-        }
-      }
+      for(a = 0; a < v_size; a++) v_array->Set(a, New<Number>(vec[a]));
+      word_obj->Set(New<String>("vector").ToLocalChecked(), v_array);
     }
-    result += "\n";
-    wordC ++; // next word
+    word_obj_array->Set(w, word_obj);
+    w ++; // next word
   }
-  args.GetReturnValue().Set(String::NewFromUtf8(isolate, result.c_str()));
+  info.GetReturnValue().Set(word_obj_array);
 }
 
-void GetSimilarWords(const FunctionCallbackInfo<Value>& args)
+void getSimilarWords(const FunctionCallbackInfo<Value>& info)
 {
-  Isolate* isolate = args.GetIsolate();
-  if(args.Length() < 1)
-  {
-    printf("GetSimilarWords has no params.\n");
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
-    return;
+  if(info.Length() < 1) {
+    printf("getSimilarWords requires 1st argument.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    exit(1);
   }
-  if(!isModelSet)
-  {
-    printf("Model is not set.\n");
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
-    return;
+  if(!isModelSet) {
+    printf("Must Load model before getVectors.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    exit(1);
   }
-  strcpy(st1, *String::Utf8Value(args[0]->ToString()));
+  strcpy(st1, *Utf8String(info[0]));
   for (a = 0; a < N; a++) bestd[a] = 0;
   for (a = 0; a < N; a++) bestw[a][0] = 0;
-  if(strlen(st1) > max_size-1)
-  {
-    printf("Word byte is too large.\n");
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
-    return;
-  }
   cn = 0;
   b = 0;
   c = 0;
@@ -317,33 +288,33 @@ void GetSimilarWords(const FunctionCallbackInfo<Value>& args)
   }
   cn++;
   for (a = 0; a < cn; a++) {
-    for (b = 0; b < words; b++) if (!strcmp(&vocab[b * max_w], st[a])) break;
-    if (b == words) b = -1;
+    for (b = 0; b < w_size; b++) if (!strcmp(&vocab[b * max_w], st[a])) break;
+    if (b == w_size) b = -1;
     bi[a] = b;
     // printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
     if (b == -1) {
       printf("%s Out of dictionary word.", st[a]);
-      args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
-      return;
+      info.GetReturnValue().Set(New<Array>(0));
+      exit(1);
     }
   }
-  for (a = 0; a < size; a++) vec[a] = 0;
+  for (a = 0; a < v_size; a++) vec[a] = 0;
   for (b = 0; b < cn; b++) {
     if (bi[b] == -1) continue;
-    for (a = 0; a < size; a++) vec[a] += M[a + bi[b] * size];
+    for (a = 0; a < v_size; a++) vec[a] += M[a + bi[b] * v_size];
   }
   len = 0;
-  for (a = 0; a < size; a++) len += vec[a] * vec[a];
+  for (a = 0; a < v_size; a++) len += vec[a] * vec[a];
   len = sqrt(len);
-  for (a = 0; a < size; a++) vec[a] /= len;
+  for (a = 0; a < v_size; a++) vec[a] /= len;
   for (a = 0; a < N; a++) bestd[a] = -1;
   for (a = 0; a < N; a++) bestw[a][0] = 0;
-  for (c = 0; c < words; c++) {
+  for (c = 0; c < w_size; c++) {
     a = 0;
     for (b = 0; b < cn; b++) if (bi[b] == c) a = 1;
     if (a == 1) continue;
     dist = 0;
-    for (a = 0; a < size; a++) dist += vec[a] * M[a + c * size];
+    for (a = 0; a < v_size; a++) dist += vec[a] * M[a + c * v_size];
     for (a = 0; a < N; a++) {
       if (dist > bestd[a]) {
         for (d = N - 1; d > a; d--) {
@@ -356,60 +327,46 @@ void GetSimilarWords(const FunctionCallbackInfo<Value>& args)
       }
     }
   }
-  std::string result = "";
-  for (a = 0; a < N; a++)
-  {
-    // printf("%s,%f\n", bestw[a], bestd[a]);
-    result += bestw[a];
-    result += ',';
-    result += std::to_string(bestd[a]);
-    if(a < N-1)
-    {
-      result += '\n';
-    }
+  Local<Array> word_obj_array = New<Array>(N);
+  for (a = 0; a < N; a++) {
+    Handle<Object> word_obj = New<Object>();
+    word_obj->Set(New<String>("word").ToLocalChecked(), New<String>(bestw[a]).ToLocalChecked());
+    word_obj->Set(New<String>("similarity").ToLocalChecked(), New<Number>(bestd[a]));
+    word_obj_array->Set(New<Number>(a), word_obj);
   }
-  args.GetReturnValue().Set(String::NewFromUtf8(isolate, result.c_str()));
-  return;
+  info.GetReturnValue().Set(word_obj_array);
 }
-void GetNeighbors(const FunctionCallbackInfo<Value>& args) {
-  Isolate* isolate = args.GetIsolate();
-  if(args.Length() < 1)
-  {
-    printf("GetNeighbors has no params.\n");
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
-    return;
+void getNeighbors(const FunctionCallbackInfo<Value>& info) {
+
+  if(info.Length() < 1) {
+    printf("getNeighbors requires 1st argument.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    exit(1);
   }
-  if(!isModelSet)
-  {
-    printf("Model is not set.\n");
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, "false"));
-    return;
+  if(!isModelSet) {
+    printf("Must Load model before getVectors.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    exit(1);
   }
-  char paraWords[max_size];
-  strcpy(paraWords, *String::Utf8Value(args[0]->ToString()));
+  Local<Array> vectors = Local<Array>::Cast(info[0]);
   for (a = 0; a < N; a++) bestd[a] = 0;
   for (a = 0; a < N; a++) bestw[a][0] = 0;
-  char *tokens[max_size];
-  split(tokens, paraWords, ",");
-  for (a = 0; a < size; a++)
-  {
-    vec[a] = atof(tokens[a]);
-  }
+  for (a = 0; a < v_size; a++) vec[a] = atof(*Utf8String(vectors->Get(New<Number>(a))));// 0.0 when invalid
   cn = 1;
   b = 0;
   c = 0;
   len = 0;
-  for (a = 0; a < size; a++) len += vec[a] * vec[a];
+  for (a = 0; a < v_size; a++) len += vec[a] * vec[a];
   len = sqrt(len);
-  for (a = 0; a < size; a++) vec[a] /= len;
+  for (a = 0; a < v_size; a++) vec[a] /= len;
   for (a = 0; a < N; a++) bestd[a] = -1;
   for (a = 0; a < N; a++) bestw[a][0] = 0;
-  for (c = 0; c < words; c++) {
+  for (c = 0; c < w_size; c++) {
     a = 0;
     for (b = 0; b < cn; b++) if (bi[b] == c) a = 1;
     if (a == 1) continue;
     dist = 0;
-    for (a = 0; a < size; a++) dist += vec[a] * M[a + c * size];
+    for (a = 0; a < v_size; a++) dist += vec[a] * M[a + c * v_size];
     for (a = 0; a < N; a++) {
       if (dist > bestd[a]) {
         for (d = N - 1; d > a; d--) {
@@ -422,25 +379,23 @@ void GetNeighbors(const FunctionCallbackInfo<Value>& args) {
       }
     }
   }
-  std::string result = "";
-  for (a = 0; a < N; a++)
-  {
-    // printf("%s,%f\n", bestw[a], bestd[a]);
-    result += bestw[a];
-    result += ',';
-    result += std::to_string(bestd[a]);
-    result += '\n';
+  Local<Array> word_obj_array = New<Array>(N);
+  for (a = 0; a < N; a++) {
+    Handle<Object> word_obj = New<Object>();
+    word_obj->Set(New<String>("word").ToLocalChecked(), New<String>(bestw[a]).ToLocalChecked());
+    word_obj->Set(New<String>("similarity").ToLocalChecked(), New<Number>(bestd[a]));
+    word_obj_array->Set(New<Number>(a), word_obj);
   }
-  args.GetReturnValue().Set(String::NewFromUtf8(isolate, result.c_str()));
+  info.GetReturnValue().Set(word_obj_array);
   return;
 }
 
 void init(Local<Object> exports) {
-  NODE_SET_METHOD(exports, "Load", LoadModel);
-  NODE_SET_METHOD(exports, "GetVectors", GetVectors);
-  NODE_SET_METHOD(exports, "GetSimilarWords", GetSimilarWords);
-  NODE_SET_METHOD(exports, "GetNeighbors", GetNeighbors);
-  NODE_SET_METHOD(exports, "BinModel2TXT", BinModel2TXT);
+  NODE_SET_METHOD(exports, "load", load);
+  NODE_SET_METHOD(exports, "getVectors", getVectors);
+  NODE_SET_METHOD(exports, "getSimilarWords", getSimilarWords);
+  NODE_SET_METHOD(exports, "getNeighbors", getNeighbors);
+  NODE_SET_METHOD(exports, "bin2txt", bin2txt);
 }
 
 NODE_MODULE(w2vLeeXun, init)
