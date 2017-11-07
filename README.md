@@ -1,9 +1,7 @@
 # word2vector NodeJS Interface
-=============
 This is a Node.js interface for Google's [word2vector](https://code.google.com/archive/p/word2vec/).<br>
 Here is an [example](https://github.com/LeeXun/word2vector-Google3G) of how to load large model like [GoogleNews-vectors-negative300.bin](https://github.com/LeeXun/word2vector-Google3G) by this package.<br>
 # Supports both binary model and raw text model.
-# Warning: Windows is not supported.
 
 # Installation
 Linux, Unix OS are supported.
@@ -54,9 +52,9 @@ w2v.train(trainFile, modelFile, {
 ### w2v.load( modelFile,?readType = "")
 <pre>Should load model before calling any calcuation functions.</pre>
 | Params        |   Description                           | Default Value |
-| ------------- |:-------------:| -----:|
+| ------------- |-------------| -------------|
 | readType        | Model format, pass "utf-8" if using a raw text model.  |     "bin"    |
-| ------------- |:-------------:| -----:|
+
 
 ``` javascript
 var w2v = require("../lib");
@@ -67,9 +65,8 @@ w2v.load( modelFile );
 
 ### w2v.getVector(word="word")
 | Params        |   Description                | Default Value |
-| ------------- |:-------------:| -----:|
+| ------------- |-------------| -------------|
 | word          | String to be searched.       |     "word"    |
-| ------------- |:-------------:| -----:|
 
 ``` javascript
 'use strict';
@@ -98,9 +95,9 @@ null // Return null if this word is not in model.
 
 ### w2v.getVectors(words=["word1", "word2"], ?options = {})
 | Params        |   Description                           | Default Value |
-| ------------- |:-------------:| -----:|
+| ------------- |-------------| -------------|
 | words          | Array of strings to be searched.       |     "word"    |
-| ------------- |:-------------:| -----:|
+
 ``` javascript
 var w2v = require("./lib");  
 var modelFile = "./data/test.model.bin";
@@ -126,12 +123,13 @@ Sample Output:
   //'李洵' is not found in the model.
 ```
 ### w2v.getSimilarWords(word = "word", ?options = {})
-#####Return 40ish words that is similar to "word".
+
+##### Return 40ish words that is similar to "word".
 | Params        |   Description                           | Default Value |
-| ------------- |:-------------:| -----:|
+| ------------- |-------------| -------------|
 | word          | Strings to be searched.                 |     "word"    |
 | options.N    | return topN results             | Array         |
-| ------------- |:-------------:| -----:|
+
 ``` javascript
 var w2v = require("./lib");
 var modelFile = "./data/test.model.bin";
@@ -159,10 +157,10 @@ Sample Output:
 
 ### getNeighbors(vector, ?options = {})
 | Params        |   Description                           | Default Value |
-| ------------- |:-------------:| -----:|
+| ------------- |-------------| -------------|
 | vector        | Vector to be searched.                  |     "word"    |
 | options.N    | return topN results             | Array         |
-| ------------- |:-------------:| -----:|
+
 ``` javascript
 var w2v = require("./lib");
 var modelFile = "./data/test.model.bin";
@@ -199,12 +197,12 @@ Sample Output1:
 <pre>Compute the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) between the two vector.
 Will auto search the vector of passed word in model. Return false if it's not found.</pre>
 | Params        |   Description                           | Default Value |
-| ------------- |:-------------:| -----:|
+| ------------- |-------------| -------------|
 | word1          | First Strings to be compared.       |     No default value    |
 | word2    | Second Strings to be compared.            |     No default value    |
 | vector1    | First Vector to be compared.            |     No default value    |
 | vector2    | Second Vector to be compared.            |     No default value    |
-| ------------- |:-------------:| -----:|
+
 
 ``` javascript
 'use strict';
@@ -232,9 +230,10 @@ false
 <pre>Substract vector1 from vector2.
 Will auto search the vector of passed word in model. Return false if it's not found.</pre>
 | Params        |   Description                           | Default Value |
-| ------------- |:-------------:| -----:|
+| ------------- |-------------| -------------|
 | word1          | Subtrahend       |     No default value    |
 | word2    | Minuend            |     No default value    |
+
 Example:
 ``` javascript
 'use strict';
@@ -255,9 +254,10 @@ Sample Output:
 <pre>Add vector1 to vector2.
 Will auto search the vector of passed word in model. Return false if it's not found.</pre>
 | Params        |   Description                           | Default Value |
-| ------------- |:-------------:| -----:|
+| ------------- |-------------| -------------|
 | word1          | Summand       |     No default value    |
 | word2    | Addend           |     No default value    |
+
 Example:
 ``` javascript
 'use strict';
