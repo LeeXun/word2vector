@@ -11,7 +11,7 @@
 
 size_t debug = 0;
 const long long max_size = 10000;         // max length of strings
-const long long N = 40;                  // number of closest words that will be shown
+const long long N = 1000;                  // number of closest words that will be shown
 const long long max_w = 50;              // max length of vocabulary entries
 namespace demo {
 
@@ -259,6 +259,9 @@ void getVectors(const FunctionCallbackInfo<Value>& info) {
 
 void getSimilarWords(const FunctionCallbackInfo<Value>& info)
 {
+  // Override global N variable with second parameter
+  long N = (long)(atoi(*Utf8String(info[1]))); 
+
   if(info.Length() < 1) {
     printf("getSimilarWords requires 1st argument.\n");
     info.GetReturnValue().Set(New<Boolean>(false));
@@ -294,9 +297,8 @@ void getSimilarWords(const FunctionCallbackInfo<Value>& info)
     bi[a] = b;
     // printf("\nWord: %s  Position in vocabulary: %lld\n", st[a], bi[a]);
     if (b == -1) {
-      printf("%s Out of dictionary word.", st[a]);
+      // Just return an empty array in case if the word is out of dictionary
       info.GetReturnValue().Set(Nan::Null());
-      exit(1);
     }
   }
   for (a = 0; a < v_size; a++) vec[a] = 0;
