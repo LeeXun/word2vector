@@ -1,6 +1,6 @@
 {
   "name": "word2vector",
-  "version": "2.0.1",
+  "version": "2.2.0",
   "description": "a word2vector interface for nodejs",
   "main": "lib/index.js",
   "scripts": {
@@ -27,7 +27,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "change-case": "^2.1.5",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.15",
     "nan": "^2.5.0"
   },
   "gypfile": true,
