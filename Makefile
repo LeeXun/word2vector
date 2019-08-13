@@ -8,6 +8,8 @@ install:
 publish:
 	npm publish
 
+# npm version patch/minor/major
+
 #########
 # Help ##
 #########

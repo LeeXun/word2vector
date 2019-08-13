@@ -4,7 +4,8 @@ Here is an [example](https://github.com/LeeXun/word2vector-Google3G) of how to l
 # Supports both binary model and raw text model.
 
 # Installation
-Linux, Unix OS are supported.
+Linux, Unix OS are supported. [Node.js 12 is not supported currently due to some API changes in V8](https://github.com/LeeXun/word2vector/issues/10). Please use Node.js LTS version (10.16.0). I will try to fix this while I am available.
+
 Install it via npm:
 ``` bash
 npm install word2vector --save
