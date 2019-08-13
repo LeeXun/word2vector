@@ -30,3 +30,6 @@ reports/
 # Run #
 ########
 run.js
+
+# Others #
+Makefile

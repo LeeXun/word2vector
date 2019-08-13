@@ -27,7 +27,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "change-case": "^2.1.5",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.15",
     "nan": "^2.5.0"
   },
   "gypfile": true,
