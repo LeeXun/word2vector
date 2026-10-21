@@ -64,8 +64,15 @@ void load(const FunctionCallbackInfo<Value>& info) {
     return;
   }
   char filename[max_size], fileType[max_size];
-  strcpy(filename, *Utf8String(info[0]));
-  strcpy(fileType, *Utf8String(info[1]));
+  Utf8String filename_arg(info[0]);
+  Utf8String fileType_arg(info[1]);
+  if (filename_arg.length() >= max_size || fileType_arg.length() >= max_size) {
+    printf("load: argument too long.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    return;
+  }
+  strcpy(filename, *filename_arg);
+  strcpy(fileType, *fileType_arg);
   printf("Reading: %s ....\n\n", filename);
   start = time(NULL);
   f = fopen(filename, "rb");
@@ -142,7 +149,13 @@ void bin2txt(const FunctionCallbackInfo<Value>& info) {
     exit(1);
   }
   char filename[max_size];
-  strcpy(filename, *Utf8String(info[0]));
+  Utf8String filename_arg(info[0]);
+  if (filename_arg.length() >= max_size) {
+    printf("bin2txt: filename too long.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    return;
+  }
+  strcpy(filename, *filename_arg);
   // printf("Reading: %s ....\n\n", filename);
   start = time(NULL);
   f = fopen(filename, "rb");
@@ -213,7 +226,13 @@ void getVectors(const FunctionCallbackInfo<Value>& info) {
       New<String>("word").ToLocalChecked(),
       word_obj_array->Get(New<Number>(w))->ToString()
     );
-    strcpy(st1, *Utf8String(word_obj_array->Get(New<Number>(w))));
+    Utf8String word_arg(word_obj_array->Get(New<Number>(w)));
+    if (word_arg.length() >= max_size) {
+      printf("getVectors: word too long.\n");
+      info.GetReturnValue().Set(New<Boolean>(false));
+      return;
+    }
+    strcpy(st1, *word_arg);
     cn = 0;
     b = 0;
     c = 0;
@@ -260,7 +279,9 @@ void getVectors(const FunctionCallbackInfo<Value>& info) {
 void getSimilarWords(const FunctionCallbackInfo<Value>& info)
 {
   // Override global N variable with second parameter
-  long N = (long)(atoi(*Utf8String(info[1]))); 
+  long N = (long)(atoi(*Utf8String(info[1])));
+  if (N < 0) N = 0;
+  if (N > ::N) N = ::N;
 
   if(info.Length() < 1) {
     printf("getSimilarWords requires 1st argument.\n");
@@ -272,7 +293,13 @@ void getSimilarWords(const FunctionCallbackInfo<Value>& info)
     info.GetReturnValue().Set(New<Boolean>(false));
     exit(1);
   }
-  strcpy(st1, *Utf8String(info[0]));
+  Utf8String word_arg(info[0]);
+  if (word_arg.length() >= max_size) {
+    printf("getSimilarWords: word too long.\n");
+    info.GetReturnValue().Set(New<Boolean>(false));
+    return;
+  }
+  strcpy(st1, *word_arg);
   for (a = 0; a < N; a++) bestd[a] = 0;
   for (a = 0; a < N; a++) bestw[a][0] = 0;
   cn = 0;
